@@ -1,0 +1,41 @@
+package com.grievency.grievencewebapp.model;
+
+import lombok.*;
+
+import javax.persistence.*;
+
+@Getter
+@Setter
+@ToString
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity
+@Table
+public class Grieve {
+    @Id
+    @SequenceGenerator(
+            name = "grieve_sequence",
+            sequenceName = "grieve_sequence",
+            allocationSize = 1
+    )
+    @GeneratedValue(
+            strategy = GenerationType.SEQUENCE,
+            generator = "grieve_sequence"
+    )
+    private Long id;
+    private String email;
+    private String date;
+    private String cartegories;
+    private String additionalInfomation;
+    private String licencePlate;
+    private int status;
+
+    public Grieve(String email, String date, String cartegories, String additionalInfomation, String licencePlate, int status) {
+        this.email = email;
+        this.date = date;
+        this.cartegories = cartegories;
+        this.additionalInfomation = additionalInfomation;
+        this.licencePlate = licencePlate;
+        this.status = status;
+    }
+}
