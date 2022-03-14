@@ -35,8 +35,10 @@ function saveUser() {
         contentType: "application/json; charset=utf-8",
         data: JSON.stringify(data),
         success: function (response) {
-            $('#verticalModal').modal('show')
-            window.location = 'auth-login-half.html'
+            $('#verticalModal-x').modal('show')
+
+            setTimeout(() => {window.location = 'index.html'}, 5000);
+
         }
     })
 }
@@ -111,7 +113,7 @@ $("#btn1").click(function (e) {
     message.classList = 'row align-items-center d-flex justify-content-end mb-4';
     let html = `<div class="col-auto ">
                                             <div class="avatar avatar-sm mb-3 mx-4">
-                                                <img src="./assets/avatars/face-4.jpg" alt="..."
+                                                <img src="./assets/avatars/face-4.png" alt="..."
                                                      class="avatar-img rounded-circle">
                                             </div>
                                         </div>
@@ -141,7 +143,7 @@ $("#btn2").click(function (e) {
     message.classList = 'row align-items-center mb-4';
     let html = `<div class="col-auto">
                                             <div class="avatar avatar-sm mb-3 mx-4">
-                                                <img src="./assets/avatars/face-4.jpg" alt="..."
+                                                <img src="./assets/avatars/face-4.png" alt="..."
                                                      class="avatar-img rounded-circle">
                                             </div>
                                         </div>
@@ -161,7 +163,8 @@ $("#btn2").click(function (e) {
     document.getElementById('btn1').setAttribute("disabled", "tue")
     document.getElementById('btn2').setAttribute("disabled", "tue")
 
-    document.getElementById('multiSelect').classList.remove('d-none')
+    setTimeout(() => {document.getElementById('multiSelect').classList.remove('d-none')}, 3000);
+
     document.getElementById('submitButton').removeAttribute("disabled")
 })
 
@@ -184,7 +187,7 @@ function getCartegoryInput() {
     message.classList = 'row align-items-center mb-4';
     let html = `<div class="col-auto">
                                             <div class="avatar avatar-sm mb-3 mx-4">
-                                                <img src="./assets/avatars/face-4.jpg" alt="..."
+                                                <img src="./assets/avatars/face-4.png" alt="..."
                                                      class="avatar-img rounded-circle">
                                             </div>
                                         </div>
@@ -209,7 +212,7 @@ function getCartegoryInput() {
     message2.classList = 'row align-items-center mb-4';
     let html2 = `<div class="col-auto">
                                             <div class="avatar avatar-sm mb-3 mx-4">
-                                                <img src="./assets/avatars/face-4.jpg" alt="..."
+                                                <img src="./assets/images/office_worker_at_work_4721901.png" alt="..."
                                                      class="avatar-img rounded-circle">
                                             </div>
                                         </div>
@@ -226,7 +229,8 @@ function getCartegoryInput() {
                                         </div>`
 
     message2.innerHTML = html2;
-    container.appendChild(message2)
+    setTimeout(() => {container.appendChild(message2)}, 3000);
+
 
 }
 
@@ -255,7 +259,7 @@ function getLicencePlate() {
             message.classList = 'row align-items-center mb-4';
             let html = `<div class="col-auto">
                                             <div class="avatar avatar-sm mb-3 mx-4">
-                                                <img src="./assets/avatars/face-4.jpg" alt="..."
+                                                <img src="./assets/avatars/face-4.ppng" alt="..."
                                                      class="avatar-img rounded-circle">
                                             </div>
                                         </div>
@@ -277,7 +281,7 @@ function getLicencePlate() {
             message2.classList = 'row align-items-center mb-4';
             let html2 = `<div class="col-auto">
                                             <div class="avatar avatar-sm mb-3 mx-4">
-                                                <img src="./assets/avatars/face-4.jpg" alt="..."
+                                                <img src="./assets/images/office_worker_at_work_4721901.png" alt="..."
                                                      class="avatar-img rounded-circle">
                                             </div>
                                         </div>
@@ -296,11 +300,9 @@ function getLicencePlate() {
                                           </span>
                                         </div>`
 
-            message2.innerHTML = html2;
-            container.appendChild(message2)
-
             document.getElementById('submitButton').setAttribute()("disabled", "true")
-
+            message2.innerHTML = html2;
+            setTimeout(() => {container.appendChild(message2)}, 5000);
         }
     });
 }
@@ -351,3 +353,76 @@ $('#btn3').click(function (e) {
         container2.removeChild(container2.firstChild);
     }
 })
+
+//Send Email from notices page
+function SendMail(){
+
+    var m1 = document.getElementById("mailSentToast");
+    var m2 = document.getElementById("mailNotSentToast");
+
+
+    m1.setAttribute("style", "display:none");
+    m2.setAttribute("style", "display:none");
+
+
+    var Message=document.getElementById("cont").value;
+    var Name = document.getElementById("tName").value;
+    var id = document.getElementById("tID").innerText;
+    var Subject=document.getElementById("subject").value;
+    var email =document.getElementById("T_email").value;
+
+    var tempParams={
+        from_name:"New World",
+        to_email:email,
+        message:Message,
+        reply_to:'ninja.ld49@gmail.com',
+        to_name:Name
+
+    };
+    emailjs.send('gmail','template_rqpdjmc',tempParams)
+        .then(function(res){
+            console.log("success",res);
+            var cont=document.getElementById("mailform");
+            var foot=document.getElementById("emailfooter");
+            var m1=document.getElementById("mailSentToast");
+            var m2=document.getElementById("mailNotSentToast");
+
+            if(res.status.toString()=="200"){
+                cont.setAttribute("style","display:none");
+                foot.setAttribute("style","display:none");
+                m1.setAttribute("style","display:all");
+            }
+        })
+        .catch(function(error){
+            console.error("Error  : ",error);
+            if(error.status==412){
+                var message=document.getElementById("mailunsent");
+                if(message){
+                    message.innerHTML="Failed , Your Email is Invalid"+" <span class='fe fe-12 fe-alert-triangle ml-3' ></span>";
+                }
+                //  var cont=document.getElementById("mailform");
+                // var foot=document.getElementById("emailfooter");
+                // var m1=document.getElementById("mailSentToast");
+                var m2=document.getElementById("mailNotSentToast");
+
+                // cont.setAttribute("style","display:none");
+                //  foot.setAttribute("style","display:none");
+                m2.setAttribute("style","display:all");
+            }else {
+
+                var message = document.getElementById("mailunsent");
+                if (message) {
+                    message.innerHTML = "Failed ," + error.text + " <span class='fe fe-12 fe-alert-triangle ml-3' ></span>";
+                }
+                //  var cont=document.getElementById("mailform");
+                // var foot=document.getElementById("emailfooter");
+                // var m1 = document.getElementById("mailSentToast");
+                var m2 = document.getElementById("mailNotSentToast");
+
+                // cont.setAttribute("style","display:none");
+                //  foot.setAttribute("style","display:none");
+                m2.setAttribute("style", "display:all");
+            }
+        })
+
+}
