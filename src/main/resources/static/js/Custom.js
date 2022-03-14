@@ -217,7 +217,7 @@ function getCartegoryInput() {
                                             </div>
                                         </div>
                                         <div class="col">
-                                            <strong>Your Name Here</strong>
+                                            <strong>Ivy</strong>
                                             <div class="mb-2">Please Enter vehicle licence plate number int the input field below and click submit
                                             </div>
                                             <small class="text-muted">2020-04-21 12:01:22</small>
@@ -286,7 +286,7 @@ function getLicencePlate() {
                                             </div>
                                         </div>
                                         <div class="col">
-                                            <strong>Your Name Here</strong>
+                                            <strong>ivy</strong>
                                             <div class="mb-2">Your grievance has been filed successfully, id to use for tracking is <strong>${response.id}</strong>
                                             </div>
                                             <button class="btn btn-outline-primary  btn-block" id="btn3">
