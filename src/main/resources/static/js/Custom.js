@@ -259,7 +259,7 @@ function getLicencePlate() {
             message.classList = 'row align-items-center mb-4';
             let html = `<div class="col-auto">
                                             <div class="avatar avatar-sm mb-3 mx-4">
-                                                <img src="./assets/avatars/face-4.ppng" alt="..."
+                                                <img src="./assets/avatars/face-4.png" alt="..."
                                                      class="avatar-img rounded-circle">
                                             </div>
                                         </div>
@@ -300,7 +300,7 @@ function getLicencePlate() {
                                           </span>
                                         </div>`
 
-            document.getElementById('submitButton').setAttribute()("disabled", "true")
+            document.getElementById('submitButton').setAttribute("disabled", "true")
             message2.innerHTML = html2;
             setTimeout(() => {container.appendChild(message2)}, 5000);
         }
