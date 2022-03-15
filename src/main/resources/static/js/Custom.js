@@ -1,3 +1,9 @@
+/*$('#multi-select2').multiselect({
+    onChange : function (){
+        console.log(this.$select.val())
+    }
+})*/
+
 function clearLocal() {
     let name = JSON.parse(localStorage.getItem('name'))
     let email = JSON.parse(localStorage.getItem('email'));
@@ -9,9 +15,10 @@ function clearLocal() {
 
 function setData() {
     let data = JSON.parse(localStorage.getItem('cat'))
-    data = data + ", " + document.getElementById('multi-select2').value
+    data = data + document.getElementById('multi-select2').value + " ,"
     localStorage.removeItem('cat');
     localStorage.setItem('cat', JSON.stringify(data));
+    console.log(document.getElementById('multi-select2').value)
 }
 
 function saveUser() {
@@ -37,7 +44,9 @@ function saveUser() {
         success: function (response) {
             $('#verticalModal-x').modal('show')
 
-            setTimeout(() => {window.location = 'index.html'}, 5000);
+            setTimeout(() => {
+                window.location = 'index.html'
+            }, 5000);
 
         }
     })
@@ -108,7 +117,7 @@ function firstOption(option) {
 $("#btn1").click(function (e) {
     e.preventDefault();
     let name = JSON.parse(localStorage.getItem('name'))
-    let container = document.getElementById('messages-div');
+    let container = document.getElementById('messages-div-1');
     let message = document.createElement('div');
     message.classList = 'row align-items-center d-flex justify-content-end mb-4';
     let html = `<div class="col-auto ">
@@ -138,7 +147,7 @@ $("#btn1").click(function (e) {
 
 $("#btn2").click(function (e) {
     let name = JSON.parse(localStorage.getItem('name'))
-    let container = document.getElementById('messages-div');
+    let container = document.getElementById('messages-div-1');
     let message = document.createElement('div');
     message.classList = 'row align-items-center mb-4';
     let html = `<div class="col-auto">
@@ -163,7 +172,10 @@ $("#btn2").click(function (e) {
     document.getElementById('btn1').setAttribute("disabled", "tue")
     document.getElementById('btn2').setAttribute("disabled", "tue")
 
-    setTimeout(() => {document.getElementById('multiSelect').classList.remove('d-none')}, 3000);
+    setTimeout(() => {
+        document.getElementById('multiSelect').classList.remove('d-none')
+    }, 3000);
+    document.getElementById('multiSelect').value = ""
 
     document.getElementById('submitButton').removeAttribute("disabled")
 })
@@ -229,7 +241,9 @@ function getCartegoryInput() {
                                         </div>`
 
     message2.innerHTML = html2;
-    setTimeout(() => {container.appendChild(message2)}, 3000);
+    setTimeout(() => {
+        container.appendChild(message2)
+    }, 3000);
 
 
 }
@@ -237,27 +251,28 @@ function getCartegoryInput() {
 function getLicencePlate() {
     let data = JSON.parse(localStorage.getItem('data'));
     let licencePlate = document.getElementById('exampleFormControlTextarea1').value;
-    data.licencePlate = licencePlate;
-    data.email = JSON.parse(localStorage.getItem('email'))
+    if (licencePlate != ""){
+        data.licencePlate = licencePlate;
+        data.email = JSON.parse(localStorage.getItem('email'))
 
-    console.log(data)
+        console.log(data)
 
-    $.ajax({
-        url: 'http://localhost:8090/api/grieve/save-grievance',
-        type: 'POST',
-        dataType: "json",
-        crossDomain: "true",
-        contentType: "application/json; charset=utf-8",
-        data: JSON.stringify(data),
-        success: function (response) {
-            console.log(response)
+        $.ajax({
+            url: 'http://localhost:8090/api/grieve/save-grievance',
+            type: 'POST',
+            dataType: "json",
+            crossDomain: "true",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify(data),
+            success: function (response) {
+                console.log(response)
 
-            let name = JSON.parse(localStorage.getItem('name'))
+                let name = JSON.parse(localStorage.getItem('name'))
 
-            let container = document.getElementById('messages-div-2');
-            let message = document.createElement('div');
-            message.classList = 'row align-items-center mb-4';
-            let html = `<div class="col-auto">
+                let container = document.getElementById('messages-div-2');
+                let message = document.createElement('div');
+                message.classList = 'row align-items-center mb-4';
+                let html = `<div class="col-auto">
                                             <div class="avatar avatar-sm mb-3 mx-4">
                                                 <img src="./assets/avatars/face-4.png" alt="..."
                                                      class="avatar-img rounded-circle">
@@ -274,12 +289,12 @@ function getLicencePlate() {
                                             <i class="fe fe-corner-down-left"></i>
                                           </span>
                                         </div>`
-            message.innerHTML = html;
-            container.appendChild(message)
+                message.innerHTML = html;
+                container.appendChild(message)
 
-            let message2 = document.createElement('div');
-            message2.classList = 'row align-items-center mb-4';
-            let html2 = `<div class="col-auto">
+                let message2 = document.createElement('div');
+                message2.classList = 'row align-items-center mb-4';
+                let html2 = `<div class="col-auto">
                                             <div class="avatar avatar-sm mb-3 mx-4">
                                                 <img src="./assets/images/office_worker_at_work_4721901.png" alt="..."
                                                      class="avatar-img rounded-circle">
@@ -289,9 +304,7 @@ function getLicencePlate() {
                                             <strong>ivy</strong>
                                             <div class="mb-2">Your grievance has been filed successfully, id to use for tracking is <strong>${response.id}</strong>
                                             </div>
-                                            <button class="btn btn-outline-primary  btn-block" id="btn3">
-                                                            okay
-                                                        </button>
+                                          
                                             <small class="text-muted">2020-04-21 12:01:22</small>
                                         </div>
                                         <div class="col-auto">
@@ -300,11 +313,113 @@ function getLicencePlate() {
                                           </span>
                                         </div>`
 
-            document.getElementById('submitButton').setAttribute("disabled", "true")
-            message2.innerHTML = html2;
-            setTimeout(() => {container.appendChild(message2)}, 5000);
-        }
-    });
+                document.getElementById('submitButton').setAttribute("disabled", "true")
+                message2.innerHTML = html2;
+                setTimeout(() => {
+                    container.appendChild(message2)
+                }, 3000);
+
+                setTimeout(() => {
+                    document.getElementById('radi').classList.remove('d-none')
+                }, 2000);
+                setTimeout(() => {
+                    document.getElementById('last').classList.remove('d-none')
+                }, 2000);
+                setTimeout(() => {
+                    var radialbarChart, radialbarOptions = {
+                        series: [10],
+                        chart: {height: 200, type: "radialBar"},
+                        plotOptions: {
+                            radialBar: {
+                                hollow: {size: "75%"},
+                                track: {background: colors.borderColor},
+                                dataLabels: {
+                                    show: !0,
+                                    name: {
+                                        fontSize: "0.875rem",
+                                        fontWeight: 400,
+                                        offsetY: -10,
+                                        show: !0,
+                                        color: colors.mutedColor,
+                                        fontFamily: base.defaultFontFamily
+                                    },
+                                    value: {
+                                        formatter: function (e) {
+                                            return parseInt(e)
+                                        },
+                                        color: colors.headingColor,
+                                        fontSize: "1.53125rem",
+                                        fontWeight: 700,
+                                        fontFamily: base.defaultFontFamily,
+                                        offsetY: 5,
+                                        show: !0
+                                    },
+                                    total: {
+                                        show: !0,
+                                        fontSize: "0.875rem",
+                                        fontWeight: 400,
+                                        offsetY: -10,
+                                        label: "Percent",
+                                        color: colors.mutedColor,
+                                        fontFamily: base.defaultFontFamily
+                                    }
+                                }
+                            }
+                        },
+                        fill: {
+                            type: "gradient",
+                            gradient: {
+                                shade: "light",
+                                type: "diagonal2",
+                                shadeIntensity: .2,
+                                gradientFromColors: [extend.primaryColorLighter],
+                                gradientToColors: [extend.primaryColorDark],
+                                inverseColors: !0,
+                                opacityFrom: 1,
+                                opacityTo: 1,
+                                stops: [20, 100]
+                            }
+                        },
+                        stroke: {lineCap: "round"},
+                        labels: ["CPU"]
+                    }, radialbar = document.querySelector("#radialbar");
+                    radialbar && (radialbarChart = new ApexCharts(radialbar, radialbarOptions)).render();
+                }, 1000);
+
+                document.getElementById('exampleFormControlTextarea1').value = ""
+
+            }
+        });
+    }else {
+        let container = document.getElementById('messages-div-2');
+        let message2 = document.createElement('div');
+        message2.classList = 'row align-items-center mb-4';
+        let html2 = `<div class="col-auto">
+                                            <div class="avatar avatar-sm mb-3 mx-4">
+                                                <img src="./assets/images/office_worker_at_work_4721901.png" alt="..."
+                                                     class="avatar-img rounded-circle">
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <strong>ivy</strong>
+                                            <div class="mb-2">licence plate ca not be empty, Please fill in the licence plate</strong>
+                                            </div>
+                                          
+                                            <small class="text-muted">2020-04-21 12:01:22</small>
+                                        </div>
+                                        <div class="col-auto">
+                                          <span class="circle circle-sm bg-light">
+                                            <i class="fe fe-corner-down-left"></i>
+                                          </span>
+                                        </div>`
+
+        message2.innerHTML = html2;
+        setTimeout(() => {
+            container.appendChild(message2)
+        }, 3000);
+
+        document.getElementById('exampleFormControlTextarea1').value = ""
+    }
 }
 
 function login() {
@@ -342,20 +457,41 @@ function login() {
 }
 
 $('#btn3').click(function (e) {
+
+})
+
+function clearFields() {
     let container = document.getElementById('messages-div-1');
     let container2 = document.getElementById('messages-div-2');
 
-    while (container.hasChildNodes()) {
-        container.removeChild(container.firstChild);
-    }
+    setTimeout(() => {
+        while (container.hasChildNodes()) {
+            container.removeChild(container.firstChild)
+        }
+    }, 1000);
 
-    while (container2.hasChildNodes()) {
-        container2.removeChild(container2.firstChild);
-    }
-})
+    setTimeout(() => {
+        while (container2.hasChildNodes()) {
+            container2.removeChild(container2.firstChild);
+        }
+    }, 1000);
+
+    setTimeout(() => {
+        document.getElementById('multiSelect').classList.add('d-none')
+    }, 1000);
+    setTimeout(() => {
+        document.getElementById('radi').classList.add('d-none')
+    }, 1000);
+    setTimeout(() => {
+        document.getElementById('last').classList.add('d-none')
+    }, 1000);
+
+    document.getElementById('btn1').removeAttribute("disabled")
+    document.getElementById('btn2').removeAttribute("disabled", "false")
+}
 
 //Send Email from notices page
-function SendMail(){
+function SendMail() {
 
     var m1 = document.getElementById("mailSentToast");
     var m2 = document.getElementById("mailNotSentToast");
@@ -365,50 +501,50 @@ function SendMail(){
     m2.setAttribute("style", "display:none");
 
 
-    var Message=document.getElementById("cont").value;
+    var Message = document.getElementById("cont").value;
     var Name = document.getElementById("tName").value;
     var id = document.getElementById("tID").innerText;
-    var Subject=document.getElementById("subject").value;
-    var email =document.getElementById("T_email").value;
+    var Subject = document.getElementById("subject").value;
+    var email = document.getElementById("T_email").value;
 
-    var tempParams={
-        from_name:"New World",
-        to_email:email,
-        message:Message,
-        reply_to:'ninja.ld49@gmail.com',
-        to_name:Name
+    var tempParams = {
+        from_name: "New World",
+        to_email: email,
+        message: Message,
+        reply_to: 'ninja.ld49@gmail.com',
+        to_name: Name
 
     };
-    emailjs.send('gmail','template_rqpdjmc',tempParams)
-        .then(function(res){
-            console.log("success",res);
-            var cont=document.getElementById("mailform");
-            var foot=document.getElementById("emailfooter");
-            var m1=document.getElementById("mailSentToast");
-            var m2=document.getElementById("mailNotSentToast");
+    emailjs.send('gmail', 'template_rqpdjmc', tempParams)
+        .then(function (res) {
+            console.log("success", res);
+            var cont = document.getElementById("mailform");
+            var foot = document.getElementById("emailfooter");
+            var m1 = document.getElementById("mailSentToast");
+            var m2 = document.getElementById("mailNotSentToast");
 
-            if(res.status.toString()=="200"){
-                cont.setAttribute("style","display:none");
-                foot.setAttribute("style","display:none");
-                m1.setAttribute("style","display:all");
+            if (res.status.toString() == "200") {
+                cont.setAttribute("style", "display:none");
+                foot.setAttribute("style", "display:none");
+                m1.setAttribute("style", "display:all");
             }
         })
-        .catch(function(error){
-            console.error("Error  : ",error);
-            if(error.status==412){
-                var message=document.getElementById("mailunsent");
-                if(message){
-                    message.innerHTML="Failed , Your Email is Invalid"+" <span class='fe fe-12 fe-alert-triangle ml-3' ></span>";
+        .catch(function (error) {
+            console.error("Error  : ", error);
+            if (error.status == 412) {
+                var message = document.getElementById("mailunsent");
+                if (message) {
+                    message.innerHTML = "Failed , Your Email is Invalid" + " <span class='fe fe-12 fe-alert-triangle ml-3' ></span>";
                 }
                 //  var cont=document.getElementById("mailform");
                 // var foot=document.getElementById("emailfooter");
                 // var m1=document.getElementById("mailSentToast");
-                var m2=document.getElementById("mailNotSentToast");
+                var m2 = document.getElementById("mailNotSentToast");
 
                 // cont.setAttribute("style","display:none");
                 //  foot.setAttribute("style","display:none");
-                m2.setAttribute("style","display:all");
-            }else {
+                m2.setAttribute("style", "display:all");
+            } else {
 
                 var message = document.getElementById("mailunsent");
                 if (message) {
@@ -426,3 +562,4 @@ function SendMail(){
         })
 
 }
+

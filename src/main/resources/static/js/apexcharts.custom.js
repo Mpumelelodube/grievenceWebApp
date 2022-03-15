@@ -890,7 +890,7 @@ var candlechart, candleChartOptions = {
 }, candlechartCtn = document.querySelector("#candleChart");
 candlechartCtn && (candlechart = new ApexCharts(candlechartCtn, candleChartOptions)).render();
 var radialbarChart, radialbarOptions = {
-    series: [70],
+    series: [10],
     chart: {height: 200, type: "radialBar"},
     plotOptions: {
         radialBar: {
