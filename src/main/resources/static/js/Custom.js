@@ -21,7 +21,7 @@ function setData() {
 
     document.getElementById('exampleFormControlTextarea1').value = value + " " + value2
 
-    data = value2;
+    data = value;
     localStorage.setItem('cat', JSON.stringify(data));
 }
 
