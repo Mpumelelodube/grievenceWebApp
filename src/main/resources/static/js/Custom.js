@@ -231,7 +231,7 @@ function getCartegoryInput() {
                                             </div>
                                         </div>
                                         <div class="col">
-                                            <strong>Ivy</strong>
+                                            <strong>Madara</strong>
                                             <div class="mb-2">Please Enter additional information in the input field below and click submit
                                             </div>
                                             <small class="text-muted">2020-04-21 12:01:22</small>
@@ -299,7 +299,7 @@ function geAdditionalInfomation() {
                                             </div>
                                         </div>
                                         <div class="col">
-                                            <strong>Ivy</strong>
+                                            <strong>Madara</strong>
                                             <div class="mb-2">Please Enter vehicle licence plate nubmer in the input field below and click submit
                                             </div>
                                             <small class="text-muted">2020-04-21 12:01:22</small>
@@ -371,7 +371,7 @@ function getLicencePlate() {
                                             </div>
                                         </div>
                                         <div class="col">
-                                            <strong>ivy</strong>
+                                            <strong>Madara</strong>
                                             <div class="mb-2">Your grievance has been filed successfully, id to use for tracking is <strong>${response.id}</strong>
                                             </div>
                                           
@@ -471,7 +471,7 @@ function getLicencePlate() {
                                             </div>
                                         </div>
                                         <div class="col">
-                                            <strong>ivy</strong>
+                                            <strong>Madara</strong>
                                             <div class="mb-2">licence plate ca not be empty, Please fill in the licence plate</strong>
                                             </div>
                                           
