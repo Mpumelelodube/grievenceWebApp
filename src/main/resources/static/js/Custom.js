@@ -19,7 +19,7 @@ function setData() {
     let value = document.getElementById("exampleFormControlTextarea1").value
     let value2 = document.getElementById("category").value
 
-    document.getElementById('exampleFormControlTextarea1').value = value + " " + value2
+    document.getElementById('exampleFormControlTextarea1').value = value + ", " + value2
 
     data = value;
     localStorage.setItem('cat', JSON.stringify(data));
