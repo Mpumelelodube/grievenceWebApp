@@ -14,11 +14,15 @@ function clearLocal() {
 }
 
 function setData() {
-    let data = JSON.parse(localStorage.getItem('cat'))
-    data = data + document.getElementById('multi-select2').value + " ,"
-    localStorage.removeItem('cat');
+    let data;
+
+    let value = document.getElementById("exampleFormControlTextarea1").value
+    let value2 = document.getElementById("category").value
+
+    document.getElementById('exampleFormControlTextarea1').value = value + " " + value2
+
+    data = value2;
     localStorage.setItem('cat', JSON.stringify(data));
-    console.log(document.getElementById('multi-select2').value)
 }
 
 function saveUser() {
@@ -181,6 +185,72 @@ $("#btn2").click(function (e) {
 })
 
 function getCartegoryInput() {
+    let cartegories = JSON.parse(localStorage.getItem('cat'))
+    let name = JSON.parse(localStorage.getItem('name'))
+
+    console.log(cartegories)
+
+    let data = {
+        cartegories
+    }
+
+    localStorage.setItem('data', JSON.stringify(data));
+
+    let container = document.getElementById('messages-div-2');
+    let message = document.createElement('div');
+    message.classList = 'row align-items-center mb-4';
+    let html = `<div class="col-auto">
+                                            <div class="avatar avatar-sm mb-3 mx-4">
+                                                <img src="./assets/avatars/face-4.png" alt="..."
+                                                     class="avatar-img rounded-circle">
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <strong>${name}</strong>
+                                            <div class="mb-2">${cartegories}
+                                            </div>
+                                            <small class="text-muted">2020-04-21 12:01:22</small>
+                                        </div>
+                                        <div class="col-auto">
+                                          <span class="circle circle-sm bg-light">
+                                            <i class="fe fe-corner-down-left"></i>
+                                          </span>
+                                        </div>`
+    message.innerHTML = html;
+    container.appendChild(message)
+
+    document.getElementById('submitButton').removeAttribute("onclick")
+    document.getElementById('submitButton').setAttribute("onclick", "geAdditionalInfomation()");
+
+    let message2 = document.createElement('div');
+    message2.classList = 'row align-items-center mb-4';
+    let html2 = `<div class="col-auto">
+                                            <div class="avatar avatar-sm mb-3 mx-4">
+                                                <img src="./assets/images/office_worker_at_work_4721901.png" alt="..."
+                                                     class="avatar-img rounded-circle">
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <strong>Ivy</strong>
+                                            <div class="mb-2">Please Enter additional information in the input field below and click submit
+                                            </div>
+                                            <small class="text-muted">2020-04-21 12:01:22</small>
+                                        </div>
+                                        <div class="col-auto">
+                                          <span class="circle circle-sm bg-light">
+                                            <i class="fe fe-corner-down-left"></i>
+                                          </span>
+                                        </div>`
+
+    message2.innerHTML = html2;
+    setTimeout(() => {
+        container.appendChild(message2)
+    }, 3000);
+
+    document.getElementById('exampleFormControlTextarea1').value = ""
+}
+
+function geAdditionalInfomation() {
     let additionalInfomation = document.getElementById('exampleFormControlTextarea1').value;
     let cartegories = JSON.parse(localStorage.getItem('cat'))
     let name = JSON.parse(localStorage.getItem('name'))
@@ -205,7 +275,7 @@ function getCartegoryInput() {
                                         </div>
                                         <div class="col">
                                             <strong>${name}</strong>
-                                            <div class="mb-2">${cartegories + " " + additionalInfomation}
+                                            <div class="mb-2">${ additionalInfomation}
                                             </div>
                                             <small class="text-muted">2020-04-21 12:01:22</small>
                                         </div>
@@ -230,7 +300,7 @@ function getCartegoryInput() {
                                         </div>
                                         <div class="col">
                                             <strong>Ivy</strong>
-                                            <div class="mb-2">Please Enter vehicle licence plate number int the input field below and click submit
+                                            <div class="mb-2">Please Enter vehicle licence plate nubmer in the input field below and click submit
                                             </div>
                                             <small class="text-muted">2020-04-21 12:01:22</small>
                                         </div>
@@ -245,7 +315,7 @@ function getCartegoryInput() {
         container.appendChild(message2)
     }, 3000);
 
-
+    document.getElementById('exampleFormControlTextarea1').value = ""
 }
 
 function getLicencePlate() {
@@ -317,7 +387,7 @@ function getLicencePlate() {
                 message2.innerHTML = html2;
                 setTimeout(() => {
                     container.appendChild(message2)
-                }, 3000);
+                }, 2000);
 
                 setTimeout(() => {
                     document.getElementById('radi').classList.remove('d-none')
@@ -325,7 +395,7 @@ function getLicencePlate() {
                 setTimeout(() => {
                     document.getElementById('last').classList.remove('d-none')
                 }, 2000);
-                setTimeout(() => {
+                /*setTimeout(() => {
                     var radialbarChart, radialbarOptions = {
                         series: [10],
                         chart: {height: 200, type: "radialBar"},
@@ -384,7 +454,7 @@ function getLicencePlate() {
                         labels: ["CPU"]
                     }, radialbar = document.querySelector("#radialbar");
                     radialbar && (radialbarChart = new ApexCharts(radialbar, radialbarOptions)).render();
-                }, 1000);
+                }, 1000);*/
 
                 document.getElementById('exampleFormControlTextarea1').value = ""
 
