@@ -176,13 +176,143 @@ $("#btn2").click(function (e) {
     document.getElementById('btn1').setAttribute("disabled", "tue")
     document.getElementById('btn2').setAttribute("disabled", "tue")
 
-    setTimeout(() => {
+    let message2 = document.createElement('div');
+    message2.classList = 'row align-items-center mb-4';
+    let html2  =  `<div class="col-auto">
+                                            <div class="avatar avatar-sm mb-3 mx-4">
+                                                <img src="./assets/avatars/face-4.png" alt="..."
+                                                     class="avatar-img rounded-circle">
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <strong>${name}</strong>
+                                            <div class="mb-2">
+                                            <div class="row no-gutters align-items-center">
+                                                    <div class="col-md-6 p-1">
+                                                        <button class="btn btn-outline-primary btn-block" onclick="scan()" id="scan">Scan QR code
+                                                        </button>
+                                                    </div>
+                                                    <div class="col-md-6 p-1">
+                                                        <button class="btn btn-outline-primary  btn-block" id="lPlate">
+                                                           Enter Licence Plate
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <small class="text-muted">2020-04-21 12:01:22</small>
+                                        </div>
+                                        <div class="col-auto">
+                                          <span class="circle circle-sm bg-light">
+                                            <i class="fe fe-corner-down-left"></i>
+                                          </span>
+                                        </div>`
+    message2.innerHTML = html2;
+    container.appendChild(message2)
+
+
+    /*setTimeout(() => {
         document.getElementById('multiSelect').classList.remove('d-none')
-    }, 3000);
+    }, 3000);*/
     document.getElementById('multiSelect').value = ""
 
     document.getElementById('submitButton').removeAttribute("disabled")
 })
+
+function scan(){
+    alert('xxxxxxxxxxxxxxxxx')
+    let name = JSON.parse(localStorage.getItem('name'))
+    let container = document.getElementById('messages-div-1');
+    let message = document.createElement('div');
+    message.classList = 'row align-items-center mb-4';
+    let html = `<div class="col-auto">
+                                            <div class="avatar avatar-sm mb-3 mx-4">
+                                                <img src="./assets/avatars/face-4.png" alt="..."
+                                                     class="avatar-img rounded-circle">
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <strong>${name}</strong>
+                                            <div class="mb-2">
+                                                <div id="vid-div">
+                                                    <video class="fe-video container-fluid"  id="preview"></video>
+                                                </div>
+                                            </div>
+                                            <small class="text-muted">2020-04-21 12:01:22</small>
+                                        </div>
+                                        <div class="col-auto">
+                                          <span class="circle circle-sm bg-light">
+                                            <i class="fe fe-corner-down-left"></i>
+                                          </span>
+                                        </div>`
+    message.innerHTML = html;
+    container.appendChild(message)
+    document.getElementById('scan').setAttribute("disabled", "tue")
+    document.getElementById('lPlate').setAttribute("disabled", "tue")
+
+    let scanner = new Instascan.Scanner({video: document.getElementById('preview')});
+    scanner.addListener('scan', function (content) {
+        alert(content);
+        console.log(content)
+        localStorage.setItem('qrData', content);
+        scanner.stop()
+
+        let vehicle = JSON.parse(content);
+
+        document.getElementById('preview').remove();
+
+        let html2 = `<div class="card shadow mb-4">
+                                <div class="card-header">
+                                    <strong class="card-title">Vehicle details</strong>
+                                    <!--                                    <span class="float-right"><i class="fe fe-flag mr-2"></i><span-->
+                                    <!--                                            class="badge badge-pill badge-success text-white">Payment</span></span>-->
+                                </div>
+                                <div id="compartmentDetails">
+                                    <div class="card-body">
+                                        <dl class="row align-items-center mb-0">
+                                            <dt class="col-sm-2 mb-3 text-muted"> Vehicle Licence Plate</dt>
+                                            <dd class="col-sm-4 mb-3">
+                                                <strong>${vehicle.licencePlate}</strong>
+                                            </dd>
+                                            <dt class="col-sm-2 mb-3 text-muted">Bus Driver</dt>
+                                            <dd class="col-sm-4 mb-3">
+                                                <strong>${vehicle.driver}</strong>
+                                            </dd>
+                                        </dl>
+                                        <dl class="row align-items-center mb-0">
+                                            <dt class="col-sm-2 mb-3 text-muted">Bus Conductor</dt>
+                                            <dd class="col-sm-4 mb-3">
+                                                <strong>${vehicle.conductor}</strong>
+                                            </dd>
+                                            <dt class="col-sm-2 mb-3 text-muted"> Route</dt>
+                                            <dd class="col-sm-4 mb-3">
+                                                <strong></strong>
+                                            </dd>
+                                        </dl>
+                                        
+                                    </div> <!-- .card-body -->
+                                </div>
+                            </div>`
+
+        document.getElementById('vid-div').innerHTML = html2
+
+        setTimeout(() => {
+            document.getElementById('multiSelect').classList.remove('d-none')
+        }, 3000);
+
+        document.getElementById('submitButton').removeAttribute("disabled")
+
+    });
+    Instascan.Camera.getCameras().then(function (cameras) {
+        if (cameras.length > 0) {
+            scanner.start(cameras[0]);
+            // scanner.stop(cameras[0])
+        } else {
+            console.error('No cameras found.');
+        }
+    }).catch(function (e) {
+        console.error(e);
+    });
+}
 
 function getCartegoryInput() {
     let cartegories = JSON.parse(localStorage.getItem('cat'))
@@ -275,7 +405,7 @@ function geAdditionalInfomation() {
                                         </div>
                                         <div class="col">
                                             <strong>${name}</strong>
-                                            <div class="mb-2">${ additionalInfomation}
+                                            <div class="mb-2">${additionalInfomation}
                                             </div>
                                             <small class="text-muted">2020-04-21 12:01:22</small>
                                         </div>
@@ -321,7 +451,7 @@ function geAdditionalInfomation() {
 function getLicencePlate() {
     let data = JSON.parse(localStorage.getItem('data'));
     let licencePlate = document.getElementById('exampleFormControlTextarea1').value;
-    if (licencePlate != ""){
+    if (licencePlate != "") {
         data.licencePlate = licencePlate;
         data.email = JSON.parse(localStorage.getItem('email'))
 
@@ -460,7 +590,7 @@ function getLicencePlate() {
 
             }
         });
-    }else {
+    } else {
         let container = document.getElementById('messages-div-2');
         let message2 = document.createElement('div');
         message2.classList = 'row align-items-center mb-4';
@@ -632,4 +762,62 @@ function SendMail() {
         })
 
 }
+
+function qr() {
+    let scanner = new Instascan.Scanner({video: document.getElementById('preview')});
+    scanner.addListener('scan', function (content) {
+        alert(content);
+        console.log(content)
+
+    });
+    Instascan.Camera.getCameras().then(function (cameras) {
+        if (cameras.length > 0) {
+            scanner.start(cameras[0]);
+            // scanner.stop(cameras[0])
+        } else {
+            console.error('No cameras found.');
+        }
+    }).catch(function (e) {
+        console.error(e);
+    });
+}
+
+function generateQR(){
+    window.addEventListener("load", () => {
+        let data = {
+            licencePlate : "ABC 234-908",
+            driver : "reaper ghost",
+            conductor: "madara uchiha"
+        }
+        // (C1) CREATE QR
+        var qrc = new QRCode(document.getElementById("qrcode"), {
+            text: JSON.stringify(data),
+            width: 400,
+            height: 400,
+            colorDark: "#bf2a2a"
+        });
+
+        // (C2) PRINT
+        document.getElementById("qrprint").onclick = () => {
+            var printwin = window.open("");
+            printwin.document.write(document.getElementById("printable").innerHTML);
+            printwin.stop();
+            let qr = printwin.document.querySelector("#qrcode img");
+            qr.addEventListener("load", () => {
+                printwin.print();
+                printwin.close();
+            });
+        };
+    });
+
+    /*window.addEventListener("load", () => {
+        let qrc = new QRCode(document.getElementById("qrcode"), {
+            text: '{"reaper":"Ghost"}',
+            width: 400,
+            height: 400,
+            colorDark: "#bf2a2a"
+        });
+    });*/
+}
+
 
