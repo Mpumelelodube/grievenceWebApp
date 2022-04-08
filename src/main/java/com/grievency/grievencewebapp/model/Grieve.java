@@ -3,6 +3,7 @@ package com.grievency.grievencewebapp.model;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -24,15 +25,16 @@ public class Grieve {
     )
     private Long id;
     private String email;
-    private String date;
+    private LocalDate date = LocalDate.now();
     private String cartegories;
     private String additionalInfomation;
     private String licencePlate;
     private int status;
+    @Transient
+    private GrievanceUser grievanceUser;
 
     public Grieve(String email, String date, String cartegories, String additionalInfomation, String licencePlate, int status) {
         this.email = email;
-        this.date = date;
         this.cartegories = cartegories;
         this.additionalInfomation = additionalInfomation;
         this.licencePlate = licencePlate;

@@ -48,4 +48,8 @@ public class GrievanceUserController {
             return new Login(grievanceUser, "500");
         }
     }
+
+    public GrievanceUser getUser(String email){
+        return grievanceUserService.findByEmail(email);
+    }
 }

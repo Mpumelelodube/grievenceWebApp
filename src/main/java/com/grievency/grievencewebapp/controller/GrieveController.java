@@ -12,10 +12,12 @@ import java.util.List;
 @RequestMapping(path = "/api/grieve")
 public class GrieveController {
     private final GrieveService grieveService;
+    private final GrievanceUserController grievanceUserController;
 
     @Autowired
-    public GrieveController(GrieveService grieveService) {
+    public GrieveController(GrieveService grieveService, GrievanceUserController grievanceUserController) {
         this.grieveService = grieveService;
+        this.grievanceUserController = grievanceUserController;
     }
 
     @PostMapping("/save-grievance")
@@ -26,5 +28,15 @@ public class GrieveController {
     @GetMapping("/find-by-email/{email}")
     public List<Grieve> getUserGrievances(@PathVariable String email){
         return grieveService.findByEmail(email);
+    }
+
+    @GetMapping("/get-all-grievances")
+    public List<Grieve> getAllGrievances(){
+        List<Grieve> grieves = grieveService.getAll();
+
+        for (int i = 0; i < grieves.size(); i++){
+            grieves.get(i).setGrievanceUser(grievanceUserController.getUser(grieves.get(i).getEmail()));
+        }
+        return grieves;
     }
 }

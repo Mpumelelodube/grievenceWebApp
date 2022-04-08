@@ -4,6 +4,40 @@
     }
 })*/
 
+function searchFilter() {
+    let response = JSON.parse(localStorage.getItem("vehicles"));
+
+    let field = document.getElementById("vehiclesSearch").value;
+
+    let t_body = document.getElementById("t_body");
+
+    while (t_body.hasChildNodes()) {
+        t_body.removeChild(t_body.firstChild);
+    }
+
+    for (let i = 0; i < response.length; i++) {
+        let string = JSON.stringify(response[i])
+
+        if (string.toLowerCase().includes(field.toLowerCase())) {
+            let html = `<td>${response[i].date}</td>
+                                                    <td>${response[i].licencePlate}</td>
+                                                    <td>${response[i].driver}</td>
+                                                    <td>${response[i].conductor}</td>
+                                                    <td>${response[i].contact}</td>
+                                                    <td><span class="text-success">${response[i].route}</span></td>
+                                                    <td>${response[i].vehicleType}</td>
+                                                    <td><button type="button" onclick="" class="btn btn-secondary btn-sm"><i class="bi bi-trash-fill"></i>view </button></td>
+                                                    `
+
+            let tr = document.createElement('tr');
+            tr.innerHTML = html;
+
+            t_body.appendChild(tr);
+        }
+    }
+}
+
+
 function clearLocal() {
     let name = JSON.parse(localStorage.getItem('name'))
     let email = JSON.parse(localStorage.getItem('email'));
@@ -30,12 +64,14 @@ function saveUser() {
     let lastName = document.getElementById("lastname").value;
     let email = document.getElementById("inputEmail4").value;
     let password = document.getElementById("inputPassword5").value;
+    let phone = document.getElementById("phone").value;
 
     let data = {
         firstNane,
         lastName,
         email,
-        password
+        password,
+        phone
     }
 
     $.ajax({
@@ -821,3 +857,113 @@ function generateQR(){
 }
 
 
+//////////////////////////////////////////////////////////////Admin//////////////////////////////////////////
+function saveBus(){
+    let licencePlate = document.getElementById("licencePlate").value
+    let driver = document.getElementById("driver").value
+    let conductor = document.getElementById("conductor").value
+    let route = document.getElementById("route").value
+    let contact = document.getElementById("contact").value
+    let vehicleType = document.getElementById("simple-select499").value
+
+    let data = {
+        licencePlate,
+        driver,
+        conductor,
+        route,
+        contact,
+        vehicleType
+    }
+
+
+    $.ajax({
+        url: '/api/vehicle/save',
+        type: 'POST',
+        dataType: "json",
+        crossDomain: "true",
+        contentType: "application/json; charset=utf-8",
+        data: JSON.stringify(data),
+        success: function (response) {
+            let element = document.getElementById("toast");
+
+            // document.getElementById("verticalModal").classList = "modal fade"
+            $('#verticalModal').modal('hide')
+            $('#successModal').modal('show')
+
+            console.log(response)
+            getVehicles()
+
+        }
+    })
+}
+
+function getVehicles(){
+    $.ajax({
+        url: '/api/vehicle/get-all-vehicles',
+        type: 'GET',
+        success: function (response) {
+            console.log(response)
+
+            localStorage.setItem("vehicles", JSON.stringify(response));
+
+            let t_body = document.getElementById("t_body");
+
+            while (t_body.hasChildNodes()) {
+                t_body.removeChild(t_body.firstChild);
+            }
+            // console.log(response[1].paymentDate)
+
+            for (let i = response.length - 1; i >= 0; i--) {
+                let html = `<td>${response[i].date}</td>
+                                                    <td>${response[i].licencePlate}</td>
+                                                    <td>${response[i].driver}</td>
+                                                    <td>${response[i].conductor}</td>
+                                                    <td>${response[i].contact}</td>
+                                                    <td><span class="text-success">${response[i].route}</span></td>
+                                                    <td>${response[i].vehicleType}</td>
+                                                    <td><button type="button" onclick="" class="btn btn-secondary btn-sm"><i class="bi bi-trash-fill"></i>view </button></td>
+                                                    `
+
+                let tr = document.createElement('tr');
+                tr.innerHTML = html;
+
+                t_body.appendChild(tr);
+            }
+        }
+    })
+}
+
+function getGrievances(){
+    $.ajax({
+        url: '/api/grieve/get-all-grievances',
+        type: 'GET',
+        success: function (response) {
+            console.log(response)
+
+            localStorage.setItem("grievances", JSON.stringify(response));
+
+            let t_body = document.getElementById("t_body");
+
+            while (t_body.hasChildNodes()) {
+                t_body.removeChild(t_body.firstChild);
+            }
+            // console.log(response[1].paymentDate)
+
+            for (let i = response.length - 1; i >= 0; i--) {
+                let html = `<td>${response[i].date}</td>
+                                                    <td>${response[i].grievanceUser.firstNane + " " + response[i].grievanceUser.lastName}</td>
+                                                    <td>${response[i].licencePlate}</td>
+                                                    <td>${response[i].cartegories}</td>
+                                                    <td>${response[i].email}</td>
+                                                    <td><span class="text-success">${response[i].Status}</span></td>
+                                                    <td>${response[i].vehicleType}</td>
+                                                    <td><button type="button" onclick="" class="btn btn-secondary btn-sm"><i class="bi bi-trash-fill"></i>view </button></td>
+                                                    `
+
+                let tr = document.createElement('tr');
+                tr.innerHTML = html;
+
+                t_body.appendChild(tr);
+            }
+        }})
+}

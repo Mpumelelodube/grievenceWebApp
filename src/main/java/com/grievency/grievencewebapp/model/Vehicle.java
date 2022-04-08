@@ -3,6 +3,8 @@ package com.grievency.grievencewebapp.model;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -27,11 +29,15 @@ public class Vehicle {
     private String route;
     private  String driver;
     private String conductor;
+    private String contact;
+    private String vehicleType;
+    private LocalDateTime date = LocalDateTime.now();
 
-    public Vehicle(String licencePlate, String route, String driver, String conductor) {
+    public Vehicle(String licencePlate, String route, String driver, String conductor, String contact) {
         this.licencePlate = licencePlate;
         this.route = route;
         this.driver = driver;
         this.conductor = conductor;
+        this.contact = contact;
     }
 }

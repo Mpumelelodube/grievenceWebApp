@@ -24,4 +24,8 @@ public class GrieveService {
     public List<Grieve> findByEmail(String email) {
         return grieveRepository.findByEmail(email);
     }
+
+    public List<Grieve> getAll() {
+        return grieveRepository.findAll();
+    }
 }

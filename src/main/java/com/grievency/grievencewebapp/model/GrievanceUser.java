@@ -27,11 +27,13 @@ public class GrievanceUser {
     private String lastName;
     private String email;
     private String password;
+    private String phone;
 
-    public GrievanceUser(String firstNane, String lastName, String email, String password) {
+    public GrievanceUser(String firstNane, String lastName, String email, String password, String phone) {
         this.firstNane = firstNane;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
+        this.phone = phone;
     }
 }
