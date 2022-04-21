@@ -93,10 +93,12 @@ function saveUser() {
 }
 
 function getGrievences() {
+    let email = JSON.parse(localStorage.getItem('email'))
     $.ajax({
-        url: 'http://localhost:8090/api/payment/get-payments',
+        url: 'http://localhost:8090/api/grieve/find-by-email/'+email,
         type: 'GET',
         success: function (response) {
+            localStorage.setItem("grievances", JSON.stringify(response));
         }
     })
 }
@@ -156,10 +158,15 @@ function firstOption(option) {
 
 $("#btn1").click(function (e) {
     e.preventDefault();
+    let response = JSON.parse(localStorage.getItem("grievances"));
     let name = JSON.parse(localStorage.getItem('name'))
     let container = document.getElementById('messages-div-1');
     let message = document.createElement('div');
     message.classList = 'row align-items-center d-flex justify-content-end mb-4';
+
+    console.log(response)
+
+
     let html = `<div class="col-auto ">
                                             <div class="avatar avatar-sm mb-3 mx-4">
                                                 <img src="./assets/avatars/face-4.png" alt="..."
@@ -168,7 +175,25 @@ $("#btn1").click(function (e) {
                                         </div>
                                         <div class="col">
                                             <strong>${name}</strong>
-                                            <div class="mb-2">i want to track and existing grievance
+                                            <div class="mb-2">
+                                                <div class="row">
+                                        <div class="col-md-12">
+                                            <table class="table table-hover table-sm">
+                                                <thead>
+                                                <tr>
+                                                    <th>id</th>
+                                                    <th>Date filed</th>
+                                                    <th>Vehicle</th>
+                                                    <th>Status</th>
+                                                    <th>View</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody id="t_body">
+
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
                                             </div>
                                             <small class="text-muted">2020-04-21 12:01:22</small>
                                         </div>
@@ -178,11 +203,37 @@ $("#btn1").click(function (e) {
                                           </span>
                                         </div>`
     message.innerHTML = html;
-    // container.appendChild(message)
+    container.appendChild(message)
 
     $("#messages-div").append(message).delay(2000).fadeIn(10000)
     document.getElementById('btn1').setAttribute("disabled", "tue")
     document.getElementById('btn2').setAttribute("disabled", "tue")
+
+    console.log(response)
+
+    localStorage.setItem("grievances", JSON.stringify(response));
+
+    let t_body = document.getElementById("t_body");
+
+    while (t_body.hasChildNodes()) {
+        t_body.removeChild(t_body.firstChild);
+    }
+    // console.log(response[1].paymentDate)
+
+    for (let i = response.length - 1; i >= 0; i--) {
+        let html = `<td>${response[i].id}</td>
+                                                    <td>${response[i].date}</td>
+                                                    <td>${response[i].licencePlate}</td>
+                                                    <td><span class="text-success">${response[i].Status}</span></td>
+                                                    <td><button type="button" onclick="" class="btn btn-secondary btn-sm"><i class="bi bi-trash-fill"></i>view </button></td>
+                                                    `
+
+        let tr = document.createElement('tr');
+        tr.innerHTML = html;
+
+        t_body.appendChild(tr);
+    }
+
 })
 
 $("#btn2").click(function (e) {
@@ -255,12 +306,19 @@ $("#btn2").click(function (e) {
 })
 
 function scan(){
-    alert('xxxxxxxxxxxxxxxxx')
-    let name = JSON.parse(localStorage.getItem('name'))
-    let container = document.getElementById('messages-div-1');
-    let message = document.createElement('div');
-    message.classList = 'row align-items-center mb-4';
-    let html = `<div class="col-auto">
+    $.ajax({
+        url: '/api/vehicle/get-all-vehicles',
+        type: 'GET',
+        success: function (response) {
+            console.log(response)
+
+            localStorage.setItem("vehicles", JSON.stringify(response));
+
+            let name = JSON.parse(localStorage.getItem('name'))
+            let container = document.getElementById('messages-div-1');
+            let message = document.createElement('div');
+            message.classList = 'row align-items-center mb-4';
+            let html = `<div class="col-auto">
                                             <div class="avatar avatar-sm mb-3 mx-4">
                                                 <img src="./assets/avatars/face-4.png" alt="..."
                                                      class="avatar-img rounded-circle">
@@ -280,23 +338,26 @@ function scan(){
                                             <i class="fe fe-corner-down-left"></i>
                                           </span>
                                         </div>`
-    message.innerHTML = html;
-    container.appendChild(message)
-    document.getElementById('scan').setAttribute("disabled", "tue")
-    document.getElementById('lPlate').setAttribute("disabled", "tue")
+            message.innerHTML = html;
+            container.appendChild(message)
+            document.getElementById('scan').setAttribute("disabled", "tue")
+            document.getElementById('lPlate').setAttribute("disabled", "tue")
 
-    let scanner = new Instascan.Scanner({video: document.getElementById('preview')});
-    scanner.addListener('scan', function (content) {
-        alert(content);
-        console.log(content)
-        localStorage.setItem('qrData', content);
-        scanner.stop()
+            let scanner = new Instascan.Scanner({video: document.getElementById('preview')});
+            scanner.addListener('scan', function (content) {
+                alert(content);
+                console.log(content)
+                let qrData = JSON.parse(content);
+                scanner.stop()
 
-        let vehicle = JSON.parse(content);
+                let vehicle = qrData.id;
+                console.log(vehicle)
 
-        document.getElementById('preview').remove();
+                document.getElementById('preview').remove();
 
-        let html2 = `<div class="card shadow mb-4">
+                for (let i = 0; i < response.length; i++){
+                    if (vehicle == response[i].id){
+                        let html2 = `<div class="card shadow mb-4">
                                 <div class="card-header">
                                     <strong class="card-title">Vehicle details</strong>
                                     <!--                                    <span class="float-right"><i class="fe fe-flag mr-2"></i><span-->
@@ -307,21 +368,21 @@ function scan(){
                                         <dl class="row align-items-center mb-0">
                                             <dt class="col-sm-2 mb-3 text-muted"> Vehicle Licence Plate</dt>
                                             <dd class="col-sm-4 mb-3">
-                                                <strong>${vehicle.licencePlate}</strong>
+                                                <strong>${response[i].licencePlate}</strong>
                                             </dd>
                                             <dt class="col-sm-2 mb-3 text-muted">Bus Driver</dt>
                                             <dd class="col-sm-4 mb-3">
-                                                <strong>${vehicle.driver}</strong>
+                                                <strong>${response[i].driver}</strong>
                                             </dd>
                                         </dl>
                                         <dl class="row align-items-center mb-0">
                                             <dt class="col-sm-2 mb-3 text-muted">Bus Conductor</dt>
                                             <dd class="col-sm-4 mb-3">
-                                                <strong>${vehicle.conductor}</strong>
+                                                <strong>${response[i].conductor}</strong>
                                             </dd>
                                             <dt class="col-sm-2 mb-3 text-muted"> Route</dt>
                                             <dd class="col-sm-4 mb-3">
-                                                <strong></strong>
+                                                <strong>${response[i].route}</strong>
                                             </dd>
                                         </dl>
                                         
@@ -329,25 +390,29 @@ function scan(){
                                 </div>
                             </div>`
 
-        document.getElementById('vid-div').innerHTML = html2
+                        document.getElementById('vid-div').innerHTML = html2
 
-        setTimeout(() => {
-            document.getElementById('multiSelect').classList.remove('d-none')
-        }, 3000);
+                        setTimeout(() => {
+                            document.getElementById('multiSelect').classList.remove('d-none')
+                        }, 3000);
 
-        document.getElementById('submitButton').removeAttribute("disabled")
+                        document.getElementById('submitButton').removeAttribute("disabled")
+                    }
+                }
 
-    });
-    Instascan.Camera.getCameras().then(function (cameras) {
-        if (cameras.length > 0) {
-            scanner.start(cameras[0]);
-            // scanner.stop(cameras[0])
-        } else {
-            console.error('No cameras found.');
+            });
+            Instascan.Camera.getCameras().then(function (cameras) {
+                if (cameras.length > 0) {
+                    scanner.start(cameras[0]);
+                    // scanner.stop(cameras[0])
+                } else {
+                    console.error('No cameras found.');
+                }
+            }).catch(function (e) {
+                console.error(e);
+            });
         }
-    }).catch(function (e) {
-        console.error(e);
-    });
+    })
 }
 
 function getCartegoryInput() {
@@ -921,7 +986,7 @@ function getVehicles(){
                                                     <td>${response[i].contact}</td>
                                                     <td><span class="text-success">${response[i].route}</span></td>
                                                     <td>${response[i].vehicleType}</td>
-                                                    <td><button type="button" onclick="" class="btn btn-secondary btn-sm"><i class="bi bi-trash-fill"></i>view </button></td>
+                                                    <td><button type="button" onclick="viewVehicle('${response[i].id}')" class="btn btn-secondary btn-sm"><i class="bi bi-trash-fill"></i>view </button></td>
                                                     `
 
                 let tr = document.createElement('tr');
@@ -931,6 +996,56 @@ function getVehicles(){
             }
         }
     })
+}
+
+function viewVehicle(id){
+    let vehicles = JSON.parse(localStorage.getItem('vehicles'));
+
+    for (let i = 0; i < vehicles.length; i++){
+        if (vehicles[i].id == id){
+            document.getElementById('licencePlate_view').innerText = vehicles[i].licencePlate;
+            document.getElementById('driver_view').innerText = vehicles[i].driver;
+            document.getElementById('conductor_view').innerText = vehicles[i].conductor;
+            document.getElementById('route_view').innerText = vehicles[i].route;
+            document.getElementById('contact_view').innerText = vehicles[i].contact;
+            document.getElementById('vehicle_type_view').innerText = vehicles[i].vehicleType;
+
+            let data = {
+                id : vehicles[i].id
+                /*licencePlate : vehicles[i].licencePlate,
+                driver : vehicles[i].driver,
+                conductor: vehicles[i].conductor,
+                route: vehicles[i].route,
+                contact: vehicles[i].contact,
+                vehicle_type: vehicles[i].vehicleType*/
+            }
+            document.getElementById("qrcode").innerHTML = "";
+            // (C1) CREATE QR
+            let qrc = new QRCode(document.getElementById("qrcode"), {
+                text: JSON.stringify(data),
+                width: 400,
+                height: 400,
+                colorDark: "#000000"
+            });
+
+            // (C2) PRINT
+            document.getElementById("qrprint").onclick = () => {
+                var printwin = window.open("");
+                printwin.document.write(document.getElementById("printable").innerHTML);
+                printwin.stop();
+                let qr = printwin.document.querySelector("#qrcode img");
+                qr.addEventListener("load", () => {
+                    printwin.print();
+                    printwin.close();
+                });
+            };
+        }
+    }
+
+
+
+    $('#verticalModal2').modal('show')
+
 }
 
 function getGrievances(){
@@ -951,12 +1066,11 @@ function getGrievances(){
 
             for (let i = response.length - 1; i >= 0; i--) {
                 let html = `<td>${response[i].date}</td>
-                                                    <td>${response[i].grievanceUser.firstNane + " " + response[i].grievanceUser.lastName}</td>
+                                                    <td><!--${response[i].grievanceUser.firstNane + " " + response[i].grievanceUser.lastName}--></td>
                                                     <td>${response[i].licencePlate}</td>
                                                     <td>${response[i].cartegories}</td>
-                                                    <td>${response[i].email}</td>
+                                                    <td>${response[i].grievanceUser.phone + ", " + response[i].email}</td>
                                                     <td><span class="text-success">${response[i].Status}</span></td>
-                                                    <td>${response[i].vehicleType}</td>
                                                     <td><button type="button" onclick="" class="btn btn-secondary btn-sm"><i class="bi bi-trash-fill"></i>view </button></td>
                                                     `
 
