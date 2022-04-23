@@ -29,11 +29,11 @@ public class Grieve {
     private String cartegories;
     private String additionalInfomation;
     private String licencePlate;
-    private String status;
+    private int status = 1;
     @Transient
     private GrievanceUser grievanceUser;
 
-    public Grieve(String email, String date, String cartegories, String additionalInfomation, String licencePlate, String status) {
+    public Grieve(String email, String date, String cartegories, String additionalInfomation, String licencePlate, int status) {
         this.email = email;
         this.cartegories = cartegories;
         this.additionalInfomation = additionalInfomation;

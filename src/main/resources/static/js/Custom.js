@@ -95,12 +95,178 @@ function saveUser() {
 function getGrievences() {
     let email = JSON.parse(localStorage.getItem('email'))
     $.ajax({
-        url: 'http://localhost:8090/api/grieve/find-by-email/'+email,
+        url: 'http://localhost:8090/api/grieve/find-by-email/' + email,
         type: 'GET',
         success: function (response) {
             localStorage.setItem("grievances", JSON.stringify(response));
         }
     })
+}
+
+function viewGrievance(id) {
+    let grievances = JSON.parse(localStorage.getItem('grievances'));
+
+    for (let i = 0; i < grievances.length; i++) {
+        if (grievances[i].id == id) {
+
+            let statusString = "";
+
+            if (grievances[i].status == 1) {
+                statusString = "filed Grievance";
+            } else if (grievances[i].status == 2) {
+                statusString = "grievance Viewed" ;
+            } else if (grievances[i].status == 3) {
+                statusString = "Investigator assigned";
+            } else if (grievances[i].status == 4) {
+                statusString = "Bus stuff brought for questioning"
+            } else if (grievances[i].status == 5) {
+                statusString = "Issue solved";
+            }
+
+            document.getElementById('email').innerText = grievances[i].email ;
+            document.getElementById('vehicle').innerText = grievances[i].licencePlate ;
+            document.getElementById('f_date').innerText = grievances[i].date ;
+            document.getElementById('status').innerText = statusString;
+            document.getElementById('additional_info').innerText = grievances[i].additionalInfomation ;
+            document.getElementById('g_category').innerText = grievances[i].cartegories ;
+
+
+            let status = 10;
+            if (grievances[i].status == 1) {
+                status = 10;
+            } else if (grievances[i].status == 2) {
+                status = 25;
+            } else if (grievances[i].status == 3) {
+                status == 45;
+            } else if (grievances[i].status == 4) {
+                status = 75
+            } else if (grievances[i].status == 5) {
+                status = 100;
+            }
+            var radialbarChart, radialbarOptions = {
+                series: [status],
+                chart: {height: 200, type: "radialBar"},
+                plotOptions: {
+                    radialBar: {
+                        hollow: {size: "75%"},
+                        track: {background: colors.borderColor},
+                        dataLabels: {
+                            show: !0,
+                            name: {
+                                fontSize: "0.875rem",
+                                fontWeight: 400,
+                                offsetY: -10,
+                                show: !0,
+                                color: colors.mutedColor,
+                                fontFamily: base.defaultFontFamily
+                            },
+                            value: {
+                                formatter: function (e) {
+                                    return parseInt(e)
+                                },
+                                color: colors.headingColor,
+                                fontSize: "1.53125rem",
+                                fontWeight: 700,
+                                fontFamily: base.defaultFontFamily,
+                                offsetY: 5,
+                                show: !0
+                            },
+                            total: {
+                                show: !0,
+                                fontSize: "0.875rem",
+                                fontWeight: 400,
+                                offsetY: -10,
+                                label: "Percent",
+                                color: colors.mutedColor,
+                                fontFamily: base.defaultFontFamily
+                            }
+                        }
+                    }
+                },
+                fill: {
+                    type: "gradient",
+                    gradient: {
+                        shade: "light",
+                        type: "diagonal2",
+                        shadeIntensity: .2,
+                        gradientFromColors: [extend.primaryColorLighter],
+                        gradientToColors: [extend.primaryColorDark],
+                        inverseColors: !0,
+                        opacityFrom: 1,
+                        opacityTo: 1,
+                        stops: [20, 100]
+                    }
+                },
+                stroke: {lineCap: "round"},
+                labels: ["CPU"]
+            }, radialbar = document.querySelector("#radialbar2");
+            radialbar && (radialbarChart = new ApexCharts(radialbar, radialbarOptions)).render();
+
+            $('#verticalModal2').modal('show')
+        }
+    }
+
+    /*var radialbarChart, radialbarOptions = {
+        series: [10],
+        chart: {height: 200, type: "radialBar"},
+        plotOptions: {
+            radialBar: {
+                hollow: {size: "75%"},
+                track: {background: colors.borderColor},
+                dataLabels: {
+                    show: !0,
+                    name: {
+                        fontSize: "0.875rem",
+                        fontWeight: 400,
+                        offsetY: -10,
+                        show: !0,
+                        color: colors.mutedColor,
+                        fontFamily: base.defaultFontFamily
+                    },
+                    value: {
+                        formatter: function (e) {
+                            return parseInt(e)
+                        },
+                        color: colors.headingColor,
+                        fontSize: "1.53125rem",
+                        fontWeight: 700,
+                        fontFamily: base.defaultFontFamily,
+                        offsetY: 5,
+                        show: !0
+                    },
+                    total: {
+                        show: !0,
+                        fontSize: "0.875rem",
+                        fontWeight: 400,
+                        offsetY: -10,
+                        label: "Percent",
+                        color: colors.mutedColor,
+                        fontFamily: base.defaultFontFamily
+                    }
+                }
+            }
+        },
+        fill: {
+            type: "gradient",
+            gradient: {
+                shade: "light",
+                type: "diagonal2",
+                shadeIntensity: .2,
+                gradientFromColors: [extend.primaryColorLighter],
+                gradientToColors: [extend.primaryColorDark],
+                inverseColors: !0,
+                opacityFrom: 1,
+                opacityTo: 1,
+                stops: [20, 100]
+            }
+        },
+        stroke: {lineCap: "round"},
+        labels: ["CPU"]
+    }, radialbar = document.querySelector("#radialbar2");
+    radialbar && (radialbarChart = new ApexCharts(radialbar, radialbarOptions)).render();*/
+
+    // $('#verticalModal2').modal('show')
+
 }
 
 function firstOption(option) {
@@ -221,11 +387,25 @@ $("#btn1").click(function (e) {
     // console.log(response[1].paymentDate)
 
     for (let i = response.length - 1; i >= 0; i--) {
+        let statusString = "";
+
+        if (response[i].status == 1) {
+            statusString = "filed Grievance";
+        } else if (response[i].status == 2) {
+            statusString = "grievance Viewed" ;
+        } else if (response[i].status == 3) {
+            statusString = "Investigator assigned";
+        } else if (response[i].status == 4) {
+            statusString = "Bus stuff brought for questioning"
+        } else if (response[i].status == 5) {
+            statusString = "Issue solved";
+        }
+
         let html = `<td>${response[i].id}</td>
                                                     <td>${response[i].date}</td>
                                                     <td>${response[i].licencePlate}</td>
-                                                    <td><span class="text-success">${response[i].Status}</span></td>
-                                                    <td><button type="button" onclick="" class="btn btn-secondary btn-sm"><i class="bi bi-trash-fill"></i>view </button></td>
+                                                    <td><span class="text-success">${statusString}</span></td>
+                                                    <td><button type="button" onclick="viewGrievance('${response[i].id}')" class="btn btn-secondary btn-sm"><i class="bi bi-trash-fill"></i>view </button></td>
                                                     `
 
         let tr = document.createElement('tr');
@@ -265,7 +445,7 @@ $("#btn2").click(function (e) {
 
     let message2 = document.createElement('div');
     message2.classList = 'row align-items-center mb-4';
-    let html2  =  `<div class="col-auto">
+    let html2 = `<div class="col-auto">
                                             <div class="avatar avatar-sm mb-3 mx-4">
                                                 <img src="./assets/avatars/face-4.png" alt="..."
                                                      class="avatar-img rounded-circle">
@@ -280,7 +460,7 @@ $("#btn2").click(function (e) {
                                                         </button>
                                                     </div>
                                                     <div class="col-md-6 p-1">
-                                                        <button class="btn btn-outline-primary  btn-block" id="lPlate">
+                                                        <button class="btn btn-outline-primary  btn-block" id="lPlate" onclick="enterlPlate()">
                                                            Enter Licence Plate
                                                         </button>
                                                     </div>
@@ -305,7 +485,7 @@ $("#btn2").click(function (e) {
     document.getElementById('submitButton').removeAttribute("disabled")
 })
 
-function scan(){
+function scan() {
     $.ajax({
         url: '/api/vehicle/get-all-vehicles',
         type: 'GET',
@@ -355,8 +535,9 @@ function scan(){
 
                 document.getElementById('preview').remove();
 
-                for (let i = 0; i < response.length; i++){
-                    if (vehicle == response[i].id){
+                for (let i = 0; i < response.length; i++) {
+                    if (vehicle == response[i].id) {
+                        localStorage.setItem('lPlateNumer', JSON.stringify(response[i].licencePlate))
                         let html2 = `<div class="card shadow mb-4">
                                 <div class="card-header">
                                     <strong class="card-title">Vehicle details</strong>
@@ -519,7 +700,156 @@ function geAdditionalInfomation() {
     container.appendChild(message)
 
     document.getElementById('submitButton').removeAttribute("onclick")
+    // document.getElementById('submitButton').setAttribute("onclick", "getLicencePlate()");
+
+    let data2 = JSON.parse(localStorage.getItem('data'));
+
+    data2.licencePlate = JSON.parse(localStorage.getItem('lPlateNumer'));
+    data2.email = JSON.parse(localStorage.getItem('email'))
+
+    console.log(data2)
+
+    $.ajax({
+        url: 'http://localhost:8090/api/grieve/save-grievance',
+        type: 'POST',
+        dataType: "json",
+        crossDomain: "true",
+        contentType: "application/json; charset=utf-8",
+        data: JSON.stringify(data2),
+        success: function (response) {
+            console.log(response)
+
+            let name = JSON.parse(localStorage.getItem('name'))
+
+            let container = document.getElementById('messages-div-2');
+            /*let message = document.createElement('div');
+            message.classList = 'row align-items-center mb-4';
+            let html = `<div class="col-auto">
+                                            <div class="avatar avatar-sm mb-3 mx-4">
+                                                <img src="./assets/avatars/face-4.png" alt="..."
+                                                     class="avatar-img rounded-circle">
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <strong>${name}</strong>
+                                            <div class="mb-2">Licence Plate Number : ${licencePlate}
+                                            </div>
+                                            <small class="text-muted">2020-04-21 12:01:22</small>
+                                        </div>
+                                        <div class="col-auto">
+                                          <span class="circle circle-sm bg-light">
+                                            <i class="fe fe-corner-down-left"></i>
+                                          </span>
+                                        </div>`
+            message.innerHTML = html;
+            container.appendChild(message)*/
+
+            let message2 = document.createElement('div');
+            message2.classList = 'row align-items-center mb-4';
+            let html2 = `<div class="col-auto">
+                                            <div class="avatar avatar-sm mb-3 mx-4">
+                                                <img src="./assets/images/office_worker_at_work_4721901.png" alt="..."
+                                                     class="avatar-img rounded-circle">
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <strong>Madara</strong>
+                                            <div class="mb-2">Your grievance has been filed successfully, id to use for tracking is <strong>${response.id}</strong>
+                                            </div>
+                                          
+                                            <small class="text-muted">2020-04-21 12:01:22</small>
+                                        </div>
+                                        <div class="col-auto">
+                                          <span class="circle circle-sm bg-light">
+                                            <i class="fe fe-corner-down-left"></i>
+                                          </span>
+                                        </div>`
+
+            document.getElementById('submitButton').setAttribute("disabled", "true")
+            message2.innerHTML = html2;
+            setTimeout(() => {
+                container.appendChild(message2)
+            }, 2000);
+
+            setTimeout(() => {
+                document.getElementById('radi').classList.remove('d-none')
+            }, 2000);
+            setTimeout(() => {
+                document.getElementById('last').classList.remove('d-none')
+            }, 2000);
+            /*setTimeout(() => {
+                var radialbarChart, radialbarOptions = {
+                    series: [10],
+                    chart: {height: 200, type: "radialBar"},
+                    plotOptions: {
+                        radialBar: {
+                            hollow: {size: "75%"},
+                            track: {background: colors.borderColor},
+                            dataLabels: {
+                                show: !0,
+                                name: {
+                                    fontSize: "0.875rem",
+                                    fontWeight: 400,
+                                    offsetY: -10,
+                                    show: !0,
+                                    color: colors.mutedColor,
+                                    fontFamily: base.defaultFontFamily
+                                },
+                                value: {
+                                    formatter: function (e) {
+                                        return parseInt(e)
+                                    },
+                                    color: colors.headingColor,
+                                    fontSize: "1.53125rem",
+                                    fontWeight: 700,
+                                    fontFamily: base.defaultFontFamily,
+                                    offsetY: 5,
+                                    show: !0
+                                },
+                                total: {
+                                    show: !0,
+                                    fontSize: "0.875rem",
+                                    fontWeight: 400,
+                                    offsetY: -10,
+                                    label: "Percent",
+                                    color: colors.mutedColor,
+                                    fontFamily: base.defaultFontFamily
+                                }
+                            }
+                        }
+                    },
+                    fill: {
+                        type: "gradient",
+                        gradient: {
+                            shade: "light",
+                            type: "diagonal2",
+                            shadeIntensity: .2,
+                            gradientFromColors: [extend.primaryColorLighter],
+                            gradientToColors: [extend.primaryColorDark],
+                            inverseColors: !0,
+                            opacityFrom: 1,
+                            opacityTo: 1,
+                            stops: [20, 100]
+                        }
+                    },
+                    stroke: {lineCap: "round"},
+                    labels: ["CPU"]
+                }, radialbar = document.querySelector("#radialbar");
+                radialbar && (radialbarChart = new ApexCharts(radialbar, radialbarOptions)).render();
+            }, 1000);*/
+
+            document.getElementById('exampleFormControlTextarea1').value = ""
+
+        }
+    });
+
+}
+
+function enterlPlate() {
     document.getElementById('submitButton').setAttribute("onclick", "getLicencePlate()");
+    document.getElementById('submitButton').removeAttribute("disabled")
+
+    let container = document.getElementById('messages-div-1');
 
     let message2 = document.createElement('div');
     message2.classList = 'row align-items-center mb-4';
@@ -547,7 +877,83 @@ function geAdditionalInfomation() {
     }, 3000);
 
     document.getElementById('exampleFormControlTextarea1').value = ""
+
+    document.getElementById('submitButton').removeAttribute("onclick");
+    document.getElementById('submitButton').setAttribute("onclick", "getLPlateNumber()");
+
 }
+
+function getLPlateNumber() {
+
+    let licencePlate = document.getElementById('exampleFormControlTextarea1').value;
+    localStorage.setItem('lPlateNumer', JSON.stringify(licencePlate))
+
+    if (licencePlate != "") {
+        let name = JSON.parse(localStorage.getItem('name'))
+
+        let container = document.getElementById('messages-div-1');
+        let message = document.createElement('div');
+        message.classList = 'row align-items-center mb-4';
+        let html = `<div class="col-auto">
+                                            <div class="avatar avatar-sm mb-3 mx-4">
+                                                <img src="./assets/avatars/face-4.png" alt="..."
+                                                     class="avatar-img rounded-circle">
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <strong>${name}</strong>
+                                            <div class="mb-2">Licence Plate Number : ${licencePlate}
+                                            </div>
+                                            <small class="text-muted">2020-04-21 12:01:22</small>
+                                        </div>
+                                        <div class="col-auto">
+                                          <span class="circle circle-sm bg-light">
+                                            <i class="fe fe-corner-down-left"></i>
+                                          </span>
+                                        </div>`
+        message.innerHTML = html;
+        container.appendChild(message)
+
+        setTimeout(() => {
+            document.getElementById('multiSelect').classList.remove('d-none')
+        }, 3000);
+
+        document.getElementById('submitButton').removeAttribute("onclick");
+        document.getElementById('submitButton').setAttribute("onclick", "geAdditionalInfomation()");
+        document.getElementById('exampleFormControlTextarea1').value = ""
+
+    } else {
+        let container = document.getElementById('messages-div-2');
+        let message2 = document.createElement('div');
+        message2.classList = 'row align-items-center mb-4';
+        let html2 = `<div class="col-auto">
+                                            <div class="avatar avatar-sm mb-3 mx-4">
+                                                <img src="./assets/images/office_worker_at_work_4721901.png" alt="..."
+                                                     class="avatar-img rounded-circle">
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <strong>Madara</strong>
+                                            <div class="mb-2">licence plate ca not be empty, Please fill in the licence plate</strong>
+                                            </div>
+                                          
+                                            <small class="text-muted">2020-04-21 12:01:22</small>
+                                        </div>
+                                        <div class="col-auto">
+                                          <span class="circle circle-sm bg-light">
+                                            <i class="fe fe-corner-down-left"></i>
+                                          </span>
+                                        </div>`
+
+        message2.innerHTML = html2;
+        setTimeout(() => {
+            container.appendChild(message2)
+        }, 3000);
+
+        document.getElementById('exampleFormControlTextarea1').value = ""
+    }
+}
+
 
 function getLicencePlate() {
     let data = JSON.parse(localStorage.getItem('data'));
@@ -883,11 +1289,11 @@ function qr() {
     });
 }
 
-function generateQR(){
+function generateQR() {
     window.addEventListener("load", () => {
         let data = {
-            licencePlate : "ABC 234-908",
-            driver : "reaper ghost",
+            licencePlate: "ABC 234-908",
+            driver: "reaper ghost",
             conductor: "madara uchiha"
         }
         // (C1) CREATE QR
@@ -923,7 +1329,7 @@ function generateQR(){
 
 
 //////////////////////////////////////////////////////////////Admin//////////////////////////////////////////
-function saveBus(){
+function saveBus() {
     let licencePlate = document.getElementById("licencePlate").value
     let driver = document.getElementById("driver").value
     let conductor = document.getElementById("conductor").value
@@ -962,7 +1368,7 @@ function saveBus(){
     })
 }
 
-function getVehicles(){
+function getVehicles() {
     $.ajax({
         url: '/api/vehicle/get-all-vehicles',
         type: 'GET',
@@ -998,11 +1404,11 @@ function getVehicles(){
     })
 }
 
-function viewVehicle(id){
+function viewVehicle(id) {
     let vehicles = JSON.parse(localStorage.getItem('vehicles'));
 
-    for (let i = 0; i < vehicles.length; i++){
-        if (vehicles[i].id == id){
+    for (let i = 0; i < vehicles.length; i++) {
+        if (vehicles[i].id == id) {
             document.getElementById('licencePlate_view').innerText = vehicles[i].licencePlate;
             document.getElementById('driver_view').innerText = vehicles[i].driver;
             document.getElementById('conductor_view').innerText = vehicles[i].conductor;
@@ -1011,7 +1417,7 @@ function viewVehicle(id){
             document.getElementById('vehicle_type_view').innerText = vehicles[i].vehicleType;
 
             let data = {
-                id : vehicles[i].id
+                id: vehicles[i].id
                 /*licencePlate : vehicles[i].licencePlate,
                 driver : vehicles[i].driver,
                 conductor: vehicles[i].conductor,
@@ -1043,12 +1449,11 @@ function viewVehicle(id){
     }
 
 
-
     $('#verticalModal2').modal('show')
 
 }
 
-function getGrievances(){
+function getGrievances() {
     $.ajax({
         url: '/api/grieve/get-all-grievances',
         type: 'GET',
@@ -1079,5 +1484,6 @@ function getGrievances(){
 
                 t_body.appendChild(tr);
             }
-        }})
+        }
+    })
 }
