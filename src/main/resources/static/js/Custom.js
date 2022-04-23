@@ -75,7 +75,7 @@ function saveUser() {
     }
 
     $.ajax({
-        url: 'http://localhost:8090/api/user/save-user',
+        url: 'https://zupco-grievance-system.herokuapp.com/api/user/save-user',
         type: 'POST',
         dataType: "json",
         crossDomain: "true",
@@ -95,7 +95,7 @@ function saveUser() {
 function getGrievences() {
     let email = JSON.parse(localStorage.getItem('email'))
     $.ajax({
-        url: 'http://localhost:8090/api/grieve/find-by-email/' + email,
+        url: 'https://zupco-grievance-system.herokuapp.com/api/grieve/find-by-email/' + email,
         type: 'GET',
         success: function (response) {
             localStorage.setItem("grievances", JSON.stringify(response));
@@ -710,7 +710,7 @@ function geAdditionalInfomation() {
     console.log(data2)
 
     $.ajax({
-        url: 'http://localhost:8090/api/grieve/save-grievance',
+        url: 'https://zupco-grievance-system.herokuapp.com/api/grieve/save-grievance',
         type: 'POST',
         dataType: "json",
         crossDomain: "true",
@@ -965,7 +965,7 @@ function getLicencePlate() {
         console.log(data)
 
         $.ajax({
-            url: 'http://localhost:8090/api/grieve/save-grievance',
+            url: 'https://zupco-grievance-system.herokuapp.com/api/grieve/save-grievance',
             type: 'POST',
             dataType: "json",
             crossDomain: "true",
@@ -1139,7 +1139,7 @@ function login() {
     }
 
     $.ajax({
-        url: 'http://localhost:8090/api/user/login',
+        url: 'https://zupco-grievance-system.herokuapp.com/api/user/login',
         type: 'POST',
         dataType: "json",
         crossDomain: "true",
