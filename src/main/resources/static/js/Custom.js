@@ -137,7 +137,7 @@ function viewGrievance(id) {
             } else if (grievances[i].status == 2) {
                 status = 25;
             } else if (grievances[i].status == 3) {
-                status == 45;
+                status = 45;
             } else if (grievances[i].status == 4) {
                 status = 75
             } else if (grievances[i].status == 5) {
@@ -1475,8 +1475,8 @@ function getGrievances() {
                                                     <td>${response[i].licencePlate}</td>
                                                     <td>${response[i].cartegories}</td>
                                                     <td>${response[i].grievanceUser.phone + ", " + response[i].email}</td>
-                                                    <td><span class="text-success">${response[i].Status}</span></td>
-                                                    <td><button type="button" onclick="" class="btn btn-secondary btn-sm"><i class="bi bi-trash-fill"></i>view </button></td>
+                                                    <td><span class="text-success">${response[i].status}</span></td>
+                                                    <td><button type="button" onclick="admin_view_grievance('${response[i].id}')" class="btn btn-secondary btn-sm"><i class="bi bi-trash-fill"></i>view </button></td>
                                                     `
 
                 let tr = document.createElement('tr');
@@ -1486,4 +1486,220 @@ function getGrievances() {
             }
         }
     })
+}
+
+function  admin_view_grievance(id){
+    document.getElementById('graph-div').innerHTML = ''
+    document.getElementById('graph-div').innerHTML = '<div id="radialbar2"></div>'
+
+    let grievances = JSON.parse(localStorage.getItem('grievances'));
+
+    localStorage.removeItem("view_grivance");
+    localStorage.setItem("view_grivance", JSON.stringify(id));
+
+    for (let i = 0; i < grievances.length; i++){
+        if (grievances[i].id == id){
+            let statusString = "";
+
+            if (grievances[i].status == 1) {
+                statusString = "filed Grievance";
+            } else if (grievances[i].status == 2) {
+                statusString = "grievance Viewed" ;
+            } else if (grievances[i].status == 3) {
+                statusString = "Investigator assigned";
+            } else if (grievances[i].status == 4) {
+                statusString = "Bus stuff brought for questioning"
+            } else if (grievances[i].status == 5) {
+                statusString = "Issue solved";
+            }
+
+            document.getElementById('email').innerText = grievances[i].email ;
+            document.getElementById('vehicle').innerText = grievances[i].licencePlate ;
+            document.getElementById('f_date').innerText = grievances[i].date ;
+            document.getElementById('status').innerText = statusString;
+            document.getElementById('additional_info').innerText = grievances[i].additionalInfomation ;
+            document.getElementById('g_category').innerText = grievances[i].cartegories ;
+
+            let status = 10;
+            if (grievances[i].status == 1) {
+                status = 10;
+            } else if (grievances[i].status == 2) {
+                status = 25;
+            } else if (grievances[i].status == 3) {
+                status = 45;
+            } else if (grievances[i].status == 4) {
+                status = 75
+            } else if (grievances[i].status == 5) {
+                status = 100;
+            }
+            var radialbarChart, radialbarOptions = {
+                series: [status],
+                chart: {height: 200, type: "radialBar"},
+                plotOptions: {
+                    radialBar: {
+                        hollow: {size: "75%"},
+                        track: {background: colors.borderColor},
+                        dataLabels: {
+                            show: !0,
+                            name: {
+                                fontSize: "0.875rem",
+                                fontWeight: 400,
+                                offsetY: -10,
+                                show: !0,
+                                color: colors.mutedColor,
+                                fontFamily: base.defaultFontFamily
+                            },
+                            value: {
+                                formatter: function (e) {
+                                    return parseInt(e)
+                                },
+                                color: colors.headingColor,
+                                fontSize: "1.53125rem",
+                                fontWeight: 700,
+                                fontFamily: base.defaultFontFamily,
+                                offsetY: 5,
+                                show: !0
+                            },
+                            total: {
+                                show: !0,
+                                fontSize: "0.875rem",
+                                fontWeight: 400,
+                                offsetY: -10,
+                                label: "Percent",
+                                color: colors.mutedColor,
+                                fontFamily: base.defaultFontFamily
+                            }
+                        }
+                    }
+                },
+                fill: {
+                    type: "gradient",
+                    gradient: {
+                        shade: "light",
+                        type: "diagonal2",
+                        shadeIntensity: .2,
+                        gradientFromColors: [extend.primaryColorLighter],
+                        gradientToColors: [extend.primaryColorDark],
+                        inverseColors: !0,
+                        opacityFrom: 1,
+                        opacityTo: 1,
+                        stops: [20, 100]
+                    }
+                },
+                stroke: {lineCap: "round"},
+                labels: ["CPU"]
+            }, radialbar = document.querySelector("#radialbar2");
+            radialbar && (radialbarChart = new ApexCharts(radialbar, radialbarOptions)).render();
+
+            $('#verticalModal2').modal('show')
+        }
+    }
+}
+
+function  updateGrievanceStatus(){
+    let id = JSON.parse(localStorage.getItem('view_grivance'));
+
+    let g_status = document.getElementById('custom-select').value;
+
+    let data = {
+        status: g_status
+    }
+    $.ajax({
+        url: '/api/grieve/update-grievance/'+id,
+        type: 'PUT',
+        dataType: "json",
+        crossDomain: "true",
+        contentType: "application/json; charset=utf-8",
+        data: JSON.stringify(data),
+        success: function (grievances) {
+            document.getElementById('graph-div').innerHTML = ''
+            document.getElementById('graph-div').innerHTML = '<div id="radialbar2"></div>'
+            let statusString = "";
+
+            if (grievances.status == 1) {
+                statusString = "filed Grievance";
+            } else if (grievances.status == 2) {
+                statusString = "grievance Viewed" ;
+            } else if (grievances.status == 3) {
+                statusString = "Investigator assigned";
+            } else if (grievances.status == 4) {
+                statusString = "Bus stuff brought for questioning"
+            } else if (grievances.status == 5) {
+                statusString = "Issue solved";
+            }
+
+            document.getElementById('status').innerText = statusString;
+
+            let status = 10;
+            if (grievances.status == 1) {
+                status = 10;
+            } else if (grievances.status == 2) {
+                status = 25;
+            } else if (grievances.status == 3) {
+                status = 45;
+            } else if (grievances.status == 4) {
+                status = 75
+            } else if (grievances.status == 5) {
+                status = 100;
+            }
+            var radialbarChart, radialbarOptions = {
+                series: [status],
+                chart: {height: 200, type: "radialBar"},
+                plotOptions: {
+                    radialBar: {
+                        hollow: {size: "75%"},
+                        track: {background: colors.borderColor},
+                        dataLabels: {
+                            show: !0,
+                            name: {
+                                fontSize: "0.875rem",
+                                fontWeight: 400,
+                                offsetY: -10,
+                                show: !0,
+                                color: colors.mutedColor,
+                                fontFamily: base.defaultFontFamily
+                            },
+                            value: {
+                                formatter: function (e) {
+                                    return parseInt(e)
+                                },
+                                color: colors.headingColor,
+                                fontSize: "1.53125rem",
+                                fontWeight: 700,
+                                fontFamily: base.defaultFontFamily,
+                                offsetY: 5,
+                                show: !0
+                            },
+                            total: {
+                                show: !0,
+                                fontSize: "0.875rem",
+                                fontWeight: 400,
+                                offsetY: -10,
+                                label: "Percent",
+                                color: colors.mutedColor,
+                                fontFamily: base.defaultFontFamily
+                            }
+                        }
+                    }
+                },
+                fill: {
+                    type: "gradient",
+                    gradient: {
+                        shade: "light",
+                        type: "diagonal2",
+                        shadeIntensity: .2,
+                        gradientFromColors: [extend.primaryColorLighter],
+                        gradientToColors: [extend.primaryColorDark],
+                        inverseColors: !0,
+                        opacityFrom: 1,
+                        opacityTo: 1,
+                        stops: [20, 100]
+                    }
+                },
+                stroke: {lineCap: "round"},
+                labels: ["CPU"]
+            }, radialbar = document.querySelector("#radialbar2");
+            radialbar && (radialbarChart = new ApexCharts(radialbar, radialbarOptions)).render();
+        }
+    });
 }

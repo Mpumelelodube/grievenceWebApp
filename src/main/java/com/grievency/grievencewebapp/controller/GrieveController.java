@@ -39,4 +39,9 @@ public class GrieveController {
         }
         return grieves;
     }
+
+    @PutMapping("/update-grievance/{id}")
+    public Grieve updateGrieve(@RequestBody Grieve grieve, @PathVariable Long id){
+        return grieveService.update(grieve, id);
+    }
 }

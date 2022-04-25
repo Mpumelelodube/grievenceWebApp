@@ -5,7 +5,9 @@ import com.grievency.grievencewebapp.repository.GrieveRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class GrieveService {
@@ -27,5 +29,15 @@ public class GrieveService {
 
     public List<Grieve> getAll() {
         return grieveRepository.findAll();
+    }
+
+    @Transactional
+    public Grieve update(Grieve update, Long id) {
+        Grieve grieve = grieveRepository.findById(id).orElseThrow(() -> new  IllegalStateException ("Grieve does not exist"));
+
+        if (update.getStatus() > grieve.getStatus() && !Objects.equals(grieve.getStatus(), update.getStatus())){
+            grieve.setStatus(update.getStatus());
+        }
+        return grieve;
     }
 }
