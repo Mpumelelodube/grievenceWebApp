@@ -1704,15 +1704,10 @@ function  updateGrievanceStatus(){
     });
 }
 
+/*chat*/
 
-function appendMessage(){
+function insertMessage(){
     let msg = $('.message-input').val();
-
-    if (msg == 1){
-
-    }
-
-
     if ($.trim(msg) == '') {
         return false;
     }
@@ -1725,6 +1720,43 @@ function appendMessage(){
     }, 1000 + (Math.random() * 20) * 100);
 }
 
-function message(){
+function fakeMessage(message){
+    if ($('.message-input').val() != '') {
+        return false;
+    }
+    $('<div class="message loading new"><figure class="avatar"><img src="http://askavenue.com/img/17.jpg" /></figure><span></span></div>').appendTo($('.mCSB_container'));
+    updateScrollbar();
+
+    setTimeout(function() {
+        $('.message.loading').remove();
+        $('<div class="message new"><figure class="avatar"><img src="http://askavenue.com/img/17.jpg" /></figure>' + message + '</div>').appendTo($('.mCSB_container')).addClass('new');
+        setDate();
+        updateScrollbar();
+        // i++;
+    }, 1000 + (Math.random() * 20) * 100);
+}
+
+function firstOption () {
+    if ($('.message-input').val() != '') {
+        return false;
+    }
+    let msg = $('.message-input').val();
+
+    if (msg == 1){
+        fakeMessage('There are Two ways to file a grievance, Please select one');
+        setTimeout(function() {
+            fakeMessage(` 1. Scan QR code \n 2. Enter Licence Plate`);
+        }, 100);
+    }
+}
+
+function firstMsg() {
+    $messages.mCustomScrollbar();
+    setTimeout(function() {
+        fakeMessage(`Hie ${localStorage.getItem('name')}`);
+        setTimeout(function() {
+            fakeMessage(`Please select an option \n 1. File grievance \n 2. Track Grievance`);
+        }, 100);
+    }, 100);
 
 }
