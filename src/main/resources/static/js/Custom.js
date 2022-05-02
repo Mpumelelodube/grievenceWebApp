@@ -1767,9 +1767,9 @@ function getScannedVehicle(vehicle) {
                     fakeMessage('below is the information for the bus you selected');
                     setTimeout(function() {
                         fakeMessage(`Licence plate : ${response[i].licencePlate}, \n Driver : ${response[i].driver}, \n Conductor : ${response[i].conductor}, \n Route : ${response[i].route}`);
-                        fakeMessage(`Please describe the nature of your grievance, and site all challenges faced with the vehicle above`);
                     }, 2000);
 
+                    fakeMessage(`Please describe the nature of your grievance, and site all challenges faced with the vehicle above`);
                 }
             }
         }
