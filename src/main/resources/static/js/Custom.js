@@ -1724,16 +1724,16 @@ function fakeMessage(message){
     if ($('.message-input').val() != '') {
         return false;
     }
-    $('<div class="message loading new"><figure class="avatar"><img src="http://askavenue.com/img/17.jpg" /></figure><span></span></div>').appendTo($('.mCSB_container'));
+    $('<div class="message loading new"><figure class="avatar"><img src="./assets/images/office_worker_at_work_4721901.png" /></figure><span></span></div>').appendTo($('.mCSB_container'));
     updateScrollbar();
 
     setTimeout(function() {
         $('.message.loading').remove();
-        $('<div class="message new"><figure class="avatar"><img src="http://askavenue.com/img/17.jpg" /></figure>' + message + '</div>').appendTo($('.mCSB_container')).addClass('new');
+        $('<div class="message new"><figure class="avatar"><img src="./assets/images/office_worker_at_work_4721901.png" /></figure>' + message + '</div>').appendTo($('.mCSB_container')).addClass('new');
         setDate();
         updateScrollbar();
         // i++;
-    }, 1000 + (Math.random() * 20) * 100);
+    }, 2000 + (Math.random() * 20) * 100);
 }
 
 function firstOption () {
@@ -1743,7 +1743,7 @@ function firstOption () {
     if (msg == 1){
         fakeMessage('There are Two ways to file a grievance, Please select one');
         setTimeout(function() {
-            fakeMessage(` 1. Scan QR code \n 2. Enter Licence Plate`);
+            fakeMessage(` 1. Scan QR code <br> 2. Enter Licence Plate`);
         }, 500);
     }
 
@@ -1766,10 +1766,16 @@ function getScannedVehicle(vehicle) {
 
                     fakeMessage('below is the information for the bus you selected');
                     setTimeout(function() {
-                        fakeMessage(`Licence plate : ${response[i].licencePlate}, \n Driver : ${response[i].driver}, \n Conductor : ${response[i].conductor}, \n Route : ${response[i].route}`);
+                        fakeMessage(`Licence plate : ${response[i].licencePlate}, <br> Driver : ${response[i].driver},  <br> Conductor : ${response[i].conductor},  <br> Route : ${response[i].route}`);
                     }, 2000);
 
-                    fakeMessage(`Please describe the nature of your grievance, and site all challenges faced with the vehicle above`);
+
+                    setTimeout(function() {
+                        fakeMessage(`Please describe the nature of  <br> your grievance and site all challenges <br> faced with the vehicle above`);
+                    },3000);
+
+                    document.getElementById('btn_send').removeAttribute('onclick');
+                    document.getElementById('btn_send').setAttribute('onclick', 'getDescription()');
                 }
             }
         }
@@ -1814,11 +1820,77 @@ function secondOption(){
     }
 }
 
+function getDescription(){
+    let msg = $('.message-input').val();
+    console.log(msg)
+    insertMessage()
+
+    var radialbarChart, radialbarOptions = {
+        series: [10],
+        chart: {height: 200, type: "radialBar"},
+        plotOptions: {
+            radialBar: {
+                hollow: {size: "75%"},
+                track: {background: colors.borderColor},
+                dataLabels: {
+                    show: !0,
+                    name: {
+                        fontSize: "0.875rem",
+                        fontWeight: 400,
+                        offsetY: -10,
+                        show: !0,
+                        color: colors.mutedColor,
+                        fontFamily: base.defaultFontFamily
+                    },
+                    value: {
+                        formatter: function (e) {
+                            return parseInt(e)
+                        },
+                        color: colors.headingColor,
+                        fontSize: "1.53125rem",
+                        fontWeight: 700,
+                        fontFamily: base.defaultFontFamily,
+                        offsetY: 5,
+                        show: !0
+                    },
+                    total: {
+                        show: !0,
+                        fontSize: "0.875rem",
+                        fontWeight: 400,
+                        offsetY: -10,
+                        label: "Percent",
+                        color: colors.mutedColor,
+                        fontFamily: base.defaultFontFamily
+                    }
+                }
+            }
+        },
+        fill: {
+            type: "gradient",
+            gradient: {
+                shade: "light",
+                type: "diagonal2",
+                shadeIntensity: .2,
+                gradientFromColors: [extend.primaryColorLighter],
+                gradientToColors: [extend.primaryColorDark],
+                inverseColors: !0,
+                opacityFrom: 1,
+                opacityTo: 1,
+                stops: [20, 100]
+            }
+        },
+        stroke: {lineCap: "round"},
+        labels: ["CPU"]
+    }, radialbar = document.querySelector("#radialbarx");
+    radialbar && (radialbarChart = new ApexCharts(radialbar, radialbarOptions)).render();
+
+}
+
 function firstMsg() {
     $messages.mCustomScrollbar();
     fakeMessage(`Hie ${localStorage.getItem('name')}`);
     setTimeout(function() {
-        fakeMessage(`Please select an option \n 1. File grievance \n 2. Track Grievance`);
+        fakeMessage(`Please select an option  <br> 1. File grievance  <br> 2. Track Grievance`);
     }, 100);
 
 }
