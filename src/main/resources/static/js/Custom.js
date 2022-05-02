@@ -1715,9 +1715,9 @@ function insertMessage(){
     setDate();
     $('.message-input').val(null);
     updateScrollbar();
-    setTimeout(function() {
+    /*setTimeout(function() {
         fakeMessage();
-    }, 1000 + (Math.random() * 20) * 100);
+    }, 1000 + (Math.random() * 20) * 100);*/
 }
 
 function fakeMessage(message){
@@ -1737,26 +1737,88 @@ function fakeMessage(message){
 }
 
 function firstOption () {
-    if ($('.message-input').val() != '') {
-        return false;
-    }
     let msg = $('.message-input').val();
-
+    console.log(msg)
+    insertMessage()
     if (msg == 1){
         fakeMessage('There are Two ways to file a grievance, Please select one');
         setTimeout(function() {
             fakeMessage(` 1. Scan QR code \n 2. Enter Licence Plate`);
-        }, 100);
+        }, 500);
+    }
+
+    document.getElementById('btn_send').removeAttribute('onclick');
+    document.getElementById('btn_send').setAttribute('onclick', 'secondOption()');
+}
+
+function getScannedVehicle(vehicle) {
+    $.ajax({
+        url: '/api/vehicle/get-all-vehicles',
+        type: 'GET',
+        success: function (response) {
+            console.log(response)
+
+            localStorage.setItem("vehicles", JSON.stringify(response));
+
+            for (let i = 0; i < response.length; i++) {
+                if (vehicle == response[i].id) {
+                    localStorage.setItem('lPlateNumer', JSON.stringify(response[i].licencePlate))
+
+                    fakeMessage('below is the information for the bus you selected');
+                    setTimeout(function() {
+                        fakeMessage(`Licence plate : ${response[i].licencePlate}, \n Driver : ${response[i].driver}, \n Conductor : ${response[i].conductor}, \n Route : ${response[i].route}`);
+                        fakeMessage(`Please describe the nature of your grievance, and site all challenges faced with the vehicle above`);
+                    }, 2000);
+
+                }
+            }
+        }
+    })
+}
+
+function secondOption(){
+    let msg = $('.message-input').val();
+    console.log(msg)
+    insertMessage()
+    if (msg == 1){
+        fakeMessage('I am going to open your camera so you scan the QR code');
+
+        setTimeout(function() {
+            let scanner = new Instascan.Scanner({video: document.getElementById('preview2')});
+            scanner.addListener('scan', function (content) {
+                alert(content);
+                console.log(content)
+                let qrData = JSON.parse(content);
+
+                scanner.stop()
+
+                getScannedVehicle(qrData.id);
+
+
+                document.getElementById('preview2').remove();
+
+            });
+            Instascan.Camera.getCameras().then(function (cameras) {
+                if (cameras.length > 0) {
+                    scanner.start(cameras[0]);
+                    // scanner.stop(cameras[0])
+                } else {
+                    console.error('No cameras found.');
+                }
+            }).catch(function (e) {
+                console.error(e);
+            });
+        }, 2000);
+    }else if (msg == 2){
+        fakeMessage('Enter Licence plate')
     }
 }
 
 function firstMsg() {
     $messages.mCustomScrollbar();
+    fakeMessage(`Hie ${localStorage.getItem('name')}`);
     setTimeout(function() {
-        fakeMessage(`Hie ${localStorage.getItem('name')}`);
-        setTimeout(function() {
-            fakeMessage(`Please select an option \n 1. File grievance \n 2. Track Grievance`);
-        }, 100);
+        fakeMessage(`Please select an option \n 1. File grievance \n 2. Track Grievance`);
     }, 100);
 
 }
