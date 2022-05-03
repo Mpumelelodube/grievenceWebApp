@@ -1817,6 +1817,8 @@ function secondOption(){
         }, 2000);
     }else if (msg == 2){
         fakeMessage('Enter Licence plate')
+        document.getElementById('btn_send').removeAttribute('onclick');
+        document.getElementById('btn_send').setAttribute('onclick', 'getLicencePlateChat()');
     }
 }
 
@@ -1884,6 +1886,18 @@ function getDescription(){
     }, radialbar = document.querySelector("#radialbarx");
     radialbar && (radialbarChart = new ApexCharts(radialbar, radialbarOptions)).render();
 
+}
+
+function getLicencePlateChat(){
+    let msg = $('.message-input').val();
+    console.log(msg)
+    insertMessage()
+
+    fakeMessage(`Please describe the nature of  <br> your grievance and site all challenges <br> faced with the vehicle above`);
+
+
+    document.getElementById('btn_send').removeAttribute('onclick');
+    document.getElementById('btn_send').setAttribute('onclick', 'getDescription()');
 }
 
 function firstMsg() {
