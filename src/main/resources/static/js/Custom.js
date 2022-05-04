@@ -2208,4 +2208,5 @@ function viewGrievanceNew(iD){
             }
         }
     }, 1000);
+
 }
