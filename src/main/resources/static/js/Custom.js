@@ -92,13 +92,48 @@ function saveUser() {
     })
 }
 
-function getGrievences() {
+function getGrievencesFront() {
     let email = JSON.parse(localStorage.getItem('email'))
     $.ajax({
         url: 'http://localhost:8090/api/grieve/find-by-email/' + email,
         type: 'GET',
         success: function (response) {
             localStorage.setItem("grievances", JSON.stringify(response));
+
+            let t_body = document.getElementById("t_body");
+
+            while (t_body.hasChildNodes()) {
+                t_body.removeChild(t_body.firstChild);
+            }
+            // console.log(response[1].paymentDate)
+
+            for (let i = response.length - 1; i >= 0; i--) {
+                let statusString = "";
+
+                if (response[i].status == 1) {
+                    statusString = "filed Grievance";
+                } else if (response[i].status == 2) {
+                    statusString = "grievance Viewed" ;
+                } else if (response[i].status == 3) {
+                    statusString = "Investigator assigned";
+                } else if (response[i].status == 4) {
+                    statusString = "Bus stuff brought for questioning"
+                } else if (response[i].status == 5) {
+                    statusString = "Issue solved";
+                }
+
+                let html = `<td>${response[i].id}</td>
+                                                    <td>${response[i].date}</td>
+                                                    <td>${response[i].licencePlate}</td>
+                                                    <td><span class="text-success">${statusString}</span></td>
+                                                    <td><button type="button" onclick="viewGrievanceNew('${i}')" class="btn btn-secondary btn-sm"><i class="bi bi-trash-fill"></i>view </button></td>
+                                                    `
+
+                let tr = document.createElement('tr');
+                tr.innerHTML = html;
+
+                t_body.appendChild(tr);
+            }
         }
     })
 }
@@ -1623,24 +1658,24 @@ function  updateGrievanceStatus(){
             } else if (grievances.status == 3) {
                 statusString = "Investigator assigned";
             } else if (grievances.status == 4) {
-                statusString = "Bus stuff brought for questioning"
+                statusString = "Issue solved"
             } else if (grievances.status == 5) {
-                statusString = "Issue solved";
+                statusString = "Grievance not approved";
             }
 
             document.getElementById('status').innerText = statusString;
 
-            let status = 10;
+            let status = 25;
             if (grievances.status == 1) {
-                status = 10;
-            } else if (grievances.status == 2) {
                 status = 25;
+            } else if (grievances.status == 2) {
+                status = 50;
             } else if (grievances.status == 3) {
-                status = 45;
+                status = 75;
             } else if (grievances.status == 4) {
-                status = 75
+                status = 100
             } else if (grievances.status == 5) {
-                status = 100;
+                status = 25;
             }
             var radialbarChart, radialbarOptions = {
                 series: [status],
@@ -1743,12 +1778,29 @@ function firstOption () {
     if (msg == 1){
         fakeMessage('There are Two ways to file a grievance, Please select one');
         setTimeout(function() {
-            fakeMessage(` 1. Scan QR code <br> 2. Enter Licence Plate`);
+            fakeMessage(` 1. Scan QR code <br> 2. Fill in a grievance form`);
         }, 500);
-    }
 
-    document.getElementById('btn_send').removeAttribute('onclick');
-    document.getElementById('btn_send').setAttribute('onclick', 'secondOption()');
+        document.getElementById('btn_send').removeAttribute('onclick');
+        document.getElementById('btn_send').setAttribute('onclick', 'secondOption()');
+    }else if (msg == 2){
+        fakeMessage('I have displayed all grievances you have filed before to the lest of the screen');
+        setTimeout(function() {
+            fakeMessage(`Please enter grievance id to view progress on timeline, alternatively you can click <b>view on timeline</b>`);
+        }, 1000);
+        getGrievencesFront()
+
+        document.getElementById('row-1').classList = 'row'
+        document.getElementById('row-2').classList = 'row'
+        document.getElementById('row-3').classList = 'row disNone'
+        document.getElementById('row-4').classList = 'row disNone'
+
+        document.getElementById('btn_send').removeAttribute('onclick');
+        document.getElementById('btn_send').setAttribute('onclick', 'viewGrievanceNew()');
+    }else {
+        fakeMessage(`Invalid response please re-enter your response`);
+        return;
+    }
 }
 
 function getScannedVehicle(vehicle) {
@@ -1789,6 +1841,11 @@ function secondOption(){
     if (msg == 1){
         fakeMessage('I am going to open your camera so you scan the QR code');
 
+        document.getElementById('row-1').classList = 'row disNone'
+        document.getElementById('row-2').classList = 'row disNone'
+        document.getElementById('row-3').classList = 'row disNone'
+        document.getElementById('row-4').classList = 'row'
+
         setTimeout(function() {
             let scanner = new Instascan.Scanner({video: document.getElementById('preview2')});
             scanner.addListener('scan', function (content) {
@@ -1816,9 +1873,17 @@ function secondOption(){
             });
         }, 2000);
     }else if (msg == 2){
-        fakeMessage('Enter Licence plate')
+        fakeMessage('I have activated the form to the <br> left of the screen, please fill the form and submit')
+
         document.getElementById('btn_send').removeAttribute('onclick');
-        document.getElementById('btn_send').setAttribute('onclick', 'getLicencePlateChat()');
+        document.getElementById('btn_send').setAttribute('disabled', 'true');
+
+        document.getElementById('saveBtn').removeAttribute('disabled');
+
+        document.getElementById('inputLicencePlate').removeAttribute('disabled');
+        document.getElementById('additionalInfomation').removeAttribute('disabled');
+        document.getElementById('category2').removeAttribute('disabled');
+        document.getElementById('vDescription').removeAttribute('disabled');
     }
 }
 
@@ -1827,6 +1892,20 @@ function getDescription(){
     console.log(msg)
     insertMessage()
 
+    let data = {};
+
+    data.email = JSON.parse(localStorage.getItem('email'))
+    data.licencePlate = JSON.parse(localStorage.getItem('lPlateNumer'));
+    data.lPlateNumer = msg
+
+    saveGrievance(data);
+
+    // fakeMessage(`te grievance has been filed   <br> your grievance and site all challenges <br> faced with the vehicle above`);
+
+
+}
+
+function activateradialBar(){
     var radialbarChart, radialbarOptions = {
         series: [10],
         chart: {height: 200, type: "radialBar"},
@@ -1885,7 +1964,6 @@ function getDescription(){
         labels: ["CPU"]
     }, radialbar = document.querySelector("#radialbarx");
     radialbar && (radialbarChart = new ApexCharts(radialbar, radialbarOptions)).render();
-
 }
 
 function getLicencePlateChat(){
@@ -1907,4 +1985,227 @@ function firstMsg() {
         fakeMessage(`Please select an option  <br> 1. File grievance  <br> 2. Track Grievance`);
     }, 100);
 
+}
+
+function formSubmit() {
+    let licencePlate = document.getElementById('inputLicencePlate'). value;
+    let additionalInfomation = document.getElementById('additionalInfomation'). value;
+    let cartegories = document.getElementById('category2'). value;
+    let email = JSON.parse(localStorage.getItem('email'))
+
+    let data = {
+        licencePlate,
+        additionalInfomation,
+        cartegories,
+        email
+    }
+
+    saveGrievance(data);
+
+    document.getElementById('inputLicencePlate').value = ""
+    document.getElementById('additionalInfomation').value = ""
+    document.getElementById('category2').value = ""
+    document.getElementById('vDescription').value = ""
+
+    document.getElementById('saveBtn').removeAttribute('disabled');
+
+    document.getElementById('inputLicencePlate').removeAttribute('disabled');
+    document.getElementById('additionalInfomation').removeAttribute('disabled');
+    document.getElementById('category2').removeAttribute('disabled');
+    document.getElementById('vDescription').removeAttribute('disabled');
+
+}
+
+function saveGrievance(data){
+    $.ajax({
+        url: 'http://localhost:8090/api/grieve/save-grievance',
+        type: 'POST',
+        dataType: "json",
+        crossDomain: "true",
+        contentType: "application/json; charset=utf-8",
+        data: JSON.stringify(data),
+        success: function (response) {
+            activateradialBar()
+            console.log(response)
+            fakeMessage(`Your grievance has been filed succesifully <br> Your tracking id is ${response.id} <br> use it to view progress on your grievance`)
+
+            getGrievencesFront();
+            document.getElementById('row-1').classList = 'row'
+            document.getElementById('row-2').classList = 'row'
+            document.getElementById('row-3').classList = 'row disNone'
+            document.getElementById('row-4').classList = 'row disNone'
+        }
+    })
+}
+
+function viewGrievanceNew(iD){
+    console.log(iD)
+    let id = $('.message-input').val() || iD
+    if (isNaN(parseInt(id))){
+        fakeMessage(`Invalid response please re-enter your response`);
+        return;
+    }
+    let response = JSON.parse(localStorage.getItem('grievances'))
+
+    let container = document.getElementById('timeline-container');
+
+    container.innerHTML = `<div class="card card-timeline px-2 border-none">
+                                            <ul class="bs4-order-tracking">
+                                                <li class="step">
+                                                    <div><i class="fas fa-hourglass-half"></i></div>
+                                                    Grievance filed
+                                                </li>
+                                                <li class="step">
+                                                    <div><i class="fas fa-hourglass-half"></i></div>
+                                                    Grievance viewed by administration
+                                                </li>
+                                                <li class="step">
+                                                    <div><i class="fas fa-hourglass-half"></i></div>
+                                                    Investigation opened
+                                                </li>
+                                                <li class="step ">
+                                                    <div><i class="fas fa-hourglass-half"></i></div>
+                                                    Resolved
+                                                </li>
+                                            </ul>
+                                            <h5 class="text-center">Please select a grievace to display its timeline</h5>
+                                        </div>`
+
+    setTimeout(function() {
+        for(let i = 0; i < response.length; i ++){
+            if (id == response[i].id){
+                if (response[i].status == 1) {
+                    statusString = "filed Grievance";
+
+                    let html = `<div class="card card-timeline px-2 border-none">
+                                            <ul class="bs4-order-tracking">
+                                                <li class="step active">
+                                                    <div><i class="fas fa-check-circle"></i></div>
+                                                    Grievance filed
+                                                </li>
+                                                <li class="step">
+                                                    <div><i class="fas fa-hourglass-half"></i></div>
+                                                    Grievance viewed by administration
+                                                </li>
+                                                <li class="step">
+                                                    <div><i class="fas fa-hourglass-half"></i></div>
+                                                    Investigation opened
+                                                </li>
+                                                <li class="step ">
+                                                    <div><i class="fas fa-hourglass-half"></i></div>
+                                                    Resolved
+                                                </li>
+                                            </ul>
+                                            <h5 class="text-center">Your grievance is awaiting review</h5>
+                                        </div>`
+
+                    container.innerHTML = html
+                } else if (response[i].status == 2) {
+                    statusString = "grievance Viewed" ;
+
+                    let html = `<div class="card card-timeline px-2 border-none">
+                                            <ul class="bs4-order-tracking">
+                                                <li class="step active">
+                                                    <div><i class="fas fa-check-circle"></i></div>
+                                                    Grievance filed
+                                                </li>
+                                                <li class="step active">
+                                                    <div><i class="fas fa-check-circle"></i></div>
+                                                    Grievance viewed by administration
+                                                </li>
+                                                <li class="step">
+                                                    <div><i class="fas fa-hourglass-half"></div>
+                                                    Investigation opened
+                                                </li>
+                                                <li class="step ">
+                                                    <div><i class="fas fa-hourglass-half"></div>
+                                                    Resolved
+                                                </li>
+                                            </ul>
+                                            <h5 class="text-center">Your grievance has been reviewed and is awaiting approval</h5>
+                                        </div>`
+
+                    container.innerHTML = html
+                } else if (response[i].status == 3) {
+                    statusString = "Investigator assigned";
+
+                    let html = `<div class="card card-timeline px-2 border-none">
+                                            <ul class="bs4-order-tracking">
+                                                <li class="step active">
+                                                    <div><i class="fas fa-check-circle"></i></div>
+                                                    Grievance filed
+                                                </li>
+                                                <li class="step active">
+                                                    <div><i class="fas fa-check-circle"></i></div>
+                                                    Grievance viewed by administration
+                                                </li>
+                                                <li class="step active">
+                                                    <div><i class="fas fa-check-circle"></i></div>
+                                                    Investigation opened
+                                                </li>
+                                                <li class="step ">
+                                                    <div><i class="fas fa-hourglass-half"></i></div>
+                                                    Resolved
+                                                </li>
+                                            </ul>
+                                            <h5 class="text-center">Your grievance has been approved and investigators have been assigned</h5>
+                                        </div>`
+
+                    container.innerHTML = html
+                } else if (response[i].status == 4) {
+                    statusString = "Bus stuff brought for questioning"
+
+                    let html = `<div class="card card-timeline px-2 border-none">
+                                            <ul class="bs4-order-tracking">
+                                                <li class="step active">
+                                                    <div><i class="fas fa-check-circle"></i></div>
+                                                    Grievance filed
+                                                </li>
+                                                <li class="step active">
+                                                    <div><i class="fas fa-check-circle"></i></div>
+                                                    Grievance viewed by administration
+                                                </li>
+                                                <li class="step active">
+                                                    <div><i class="fas fa-check-circle"></i></div>
+                                                    Investigation opened
+                                                </li>
+                                                <li class="step active">
+                                                    <div><i class="fas fa-check-circle"></i></div>
+                                                    Resolved
+                                                </li>
+                                            </ul>
+                                            <h5 class="text-center">Your grievance has been resolved</h5>
+                                        </div>`
+
+                    container.innerHTML = html
+                } else if (response[i].status == 5) {
+                    statusString = "Issue solved";
+
+                    let html = `<div class="card card-timeline px-2 border-none">
+                                            <ul class="bs4-order-tracking">
+                                                <li class="step active">
+                                                    <div><i class="fas fa-check-circle"></i></div>
+                                                    Grievance filed
+                                                </li>
+                                                <li class="step active" style="color: red">
+                                                    <div><i class="fas fa-times-circle" style="color: red"></i></div>
+                                                    Grievance viewed by administration
+                                                </li>
+                                                <li class="step ">
+                                                    <div><i class="fas fa-hourglass-half"></i></div>
+                                                    Investigation opened
+                                                </li>
+                                                <li class="step ">
+                                                    <div><i class="fas fa-hourglass-half"></i></div>
+                                                    Resolved
+                                                </li>
+                                            </ul>
+                                            <h5 class="text-center" style="color: rgba(255,0,0,0.56)">Your grievance has not been approved, this could be because of poor information provided</h5>
+                                        </div>`
+
+                    container.innerHTML = html
+                }
+            }
+        }
+    }, 1000);
 }
