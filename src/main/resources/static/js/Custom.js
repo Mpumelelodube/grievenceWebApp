@@ -126,7 +126,7 @@ function getGrievencesFront() {
                                                     <td>${response[i].date}</td>
                                                     <td>${response[i].licencePlate}</td>
                                                     <td><span class="text-success">${statusString}</span></td>
-                                                    <td><button type="button" onclick="viewGrievanceNew('${i}')" class="btn btn-secondary btn-sm"><i class="bi bi-trash-fill"></i>view </button></td>
+                                                    <td><button type="button" onclick="viewGrievanceNew('${response[i].id}')" class="btn btn-secondary btn-sm"><i class="bi bi-trash-fill"></i>view </button></td>
                                                     `
 
                 let tr = document.createElement('tr');
@@ -2025,7 +2025,6 @@ function saveGrievance(data){
         contentType: "application/json; charset=utf-8",
         data: JSON.stringify(data),
         success: function (response) {
-            activateradialBar()
             console.log(response)
             fakeMessage(`Your grievance has been filed succesifully <br> Your tracking id is ${response.id} <br> use it to view progress on your grievance`)
 
@@ -2034,13 +2033,20 @@ function saveGrievance(data){
             document.getElementById('row-2').classList = 'row'
             document.getElementById('row-3').classList = 'row disNone'
             document.getElementById('row-4').classList = 'row disNone'
+
+            setTimeout(function() {
+                firstMsg()
+            }, 500);
+
+            document.getElementById('btn_send').removeAttribute('onclick');
+            document.getElementById('btn_send').setAttribute('onclick', 'firstOption()');
         }
     })
 }
 
 function viewGrievanceNew(iD){
     console.log(iD)
-    let id = $('.message-input').val() || iD
+    let id = iD || $('.message-input').val()
     if (isNaN(parseInt(id))){
         fakeMessage(`Invalid response please re-enter your response`);
         return;
@@ -2076,6 +2082,7 @@ function viewGrievanceNew(iD){
             if (id == response[i].id){
                 if (response[i].status == 1) {
                     statusString = "filed Grievance";
+                    alert(response.status)
 
                     let html = `<div class="card card-timeline px-2 border-none">
                                             <ul class="bs4-order-tracking">
@@ -2102,6 +2109,8 @@ function viewGrievanceNew(iD){
                     container.innerHTML = html
                 } else if (response[i].status == 2) {
                     statusString = "grievance Viewed" ;
+
+                    alert(response.status)
 
                     let html = `<div class="card card-timeline px-2 border-none">
                                             <ul class="bs4-order-tracking">
@@ -2208,5 +2217,4 @@ function viewGrievanceNew(iD){
             }
         }
     }, 1000);
-
 }
