@@ -1980,7 +1980,7 @@ function getLicencePlateChat(){
 
 function firstMsg() {
     $messages.mCustomScrollbar();
-    fakeMessage(`Hie ${localStorage.getItem('name')}`);
+    fakeMessage(`Hie ${localStorage.getItem('name')} I am sophia, a virtual assistant designed to help you file your grievance`);
     setTimeout(function() {
         fakeMessage(`Please select an option  <br> 1. File grievance  <br> 2. Track Grievance`);
     }, 100);
