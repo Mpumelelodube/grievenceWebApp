@@ -25,8 +25,11 @@
     <!-- App CSS -->
     <link rel="stylesheet" href="css/app-light.css" id="lightTheme">
     <link rel="stylesheet" href="css/app-dark.css" id="darkTheme" disabled>
+
+    <link rel="stylesheet" href="./css/custom.css">
+
 </head>
-<body class="vertical  light  ">
+<body class="vertical  light  " onload="isAdmin()">
 <div class="wrapper">
     <nav class="topnav navbar navbar-light">
         <button type="button" class="navbar-toggler text-muted mt-2 p-0 mr-3 collapseSidebar">
@@ -173,13 +176,13 @@
 -->
                     </a>
                 </li>
-                <li class="nav-item w-100">
-                    <a class="nav-link" href="#">
+                <li class="nav-item w-100" id="userManagement">
+                    <a class="nav-link" href="users.html">
                         <i class="fe fe-layers fe-16"></i>
-                        <span class="ml-3 item-text">Tracking</span>
-<!--
-                        <span class="badge badge-pill badge-primary">New</span>
--->
+                        <span class="ml-3 item-text">User Management</span>
+                        <!--
+                                                <span class="badge badge-pill badge-primary">New</span>
+                        -->
                     </a>
                 </li>
                 <!--<li class="nav-item dropdown">
@@ -1169,17 +1172,7 @@
     }
 </script>
 <script src="js/apps.js"></script>
-<!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-56159088-1"></script>
-<script>
-    window.dataLayer = window.dataLayer || [];
+<script src="js/Custom.js"></script>
 
-    function gtag() {
-        dataLayer.push(arguments);
-    }
-
-    gtag('js', new Date());
-    gtag('config', 'UA-56159088-1');
-</script>
 </body>
 </html>

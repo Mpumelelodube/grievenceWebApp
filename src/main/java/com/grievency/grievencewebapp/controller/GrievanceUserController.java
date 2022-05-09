@@ -49,6 +49,23 @@ public class GrievanceUserController {
         }
     }
 
+    @PostMapping("/login-admin")
+    public Login loginAdmin(@RequestBody GrievanceUser grievanceUser){
+        GrievanceUser user;
+        try {
+            user = grievanceUserService.findByEmail(grievanceUser.getEmail());
+            if (user.getPassword().equals(grievanceUser.getPassword())){
+                return new Login(user, "success");
+            }else {
+                return new Login(grievanceUser, "fail");
+            }
+        }catch (NullPointerException e){
+            return new Login(grievanceUser, "500");
+        }
+    }
+
+
+
     public GrievanceUser getUser(String email){
         return grievanceUserService.findByEmail(email);
     }

@@ -92,6 +92,39 @@ function saveUser() {
     })
 }
 
+function saveUserAdmin() {
+    let firstNane = document.getElementById("firstname").value;
+    let lastName = document.getElementById("lastname").value;
+    let email = document.getElementById("inputEmail4").value;
+    let password = document.getElementById("inputPassword5").value;
+    let phone = document.getElementById("phone").value;
+
+    let data = {
+        firstNane,
+        lastName,
+        email,
+        password,
+        phone
+    }
+
+    $.ajax({
+        url: 'http://localhost:8090/api/user-admin/save-user',
+        type: 'POST',
+        dataType: "json",
+        crossDomain: "true",
+        contentType: "application/json; charset=utf-8",
+        data: JSON.stringify(data),
+        success: function (response) {
+            $('#verticalModal-x').modal('show')
+
+            setTimeout(() => {
+                window.location = 'login-admin.html'
+            }, 5000);
+
+        }
+    })
+}
+
 function getGrievencesFront() {
     let email = JSON.parse(localStorage.getItem('email'))
     $.ajax({
@@ -1198,6 +1231,57 @@ function login() {
     })
 }
 
+function loginAdmin() {
+    let email = document.getElementById('inputEmail').value
+    let password = document.getElementById('inputPassword').value
+
+    let data = {
+        email,
+        password
+    }
+
+    $.ajax({
+        url: 'http://localhost:8090/api/user-admin/login',
+        type: 'POST',
+        dataType: "json",
+        crossDomain: "true",
+        contentType: "application/json; charset=utf-8",
+        data: JSON.stringify(data),
+        success: function (response) {
+            console.log(response)
+            if (response.status === "success") {
+
+                let fullName = response.grievanceUser.firstNane + " " + response.grievanceUser.lastName
+                localStorage.setItem('email', JSON.stringify(response.grievanceUser.email))
+
+                localStorage.setItem('name', JSON.stringify(fullName))
+                if (response.accessLevel == 5){
+                    alert('this user has not been activated yet')
+                }else {
+                    localStorage.setItem('user', JSON.stringify(response));
+                    window.location = "index-admin.html"
+                }
+
+
+            } else if (response.status === "fail") {
+                $('#verticalModal').modal('show')
+            } else if (response.status == 500) {
+                $('#verticalModal2').modal('show')
+            }
+        }
+    })
+}
+function isAdmin(){
+    let response = JSON.parse(localStorage.getItem('user'));
+
+    console.log(response.accessLevel)
+    if (response.accessLevel != 0){
+        let element = document.getElementById('userManagement');
+
+        element.classList = 'nav-item w-100 disNone'
+    }
+}
+
 $('#btn3').click(function (e) {
 
 })
@@ -1489,6 +1573,45 @@ function viewVehicle(id) {
 }
 
 function getGrievances() {
+    $.ajax({
+        url: '/api/grieve/get-all-grievances',
+        type: 'GET',
+        success: function (response) {
+            console.log(response)
+
+            localStorage.setItem("grievances", JSON.stringify(response));
+
+            let t_body = document.getElementById("t_body");
+
+            while (t_body.hasChildNodes()) {
+                t_body.removeChild(t_body.firstChild);
+            }
+            // console.log(response[1].paymentDate)
+
+            for (let i = response.length - 1; i >= 0; i--) {
+                let html = `<td>${response[i].date}</td>
+                                                    <td><!--${response[i].grievanceUser.firstNane + " " + response[i].grievanceUser.lastName}--></td>
+                                                    <td>${response[i].licencePlate}</td>
+                                                    <td>${response[i].cartegories}</td>
+                                                    <td>${response[i].grievanceUser.phone + ", " + response[i].email}</td>
+                                                    <td><span class="text-success">${response[i].status}</span></td>
+                                                    <td><button type="button" onclick="admin_view_grievance('${response[i].id}')" class="btn btn-secondary btn-sm"><i class="bi bi-trash-fill"></i>view </button></td>
+                                                    `
+
+                let tr = document.createElement('tr');
+                tr.innerHTML = html;
+
+                t_body.appendChild(tr);
+            }
+        }
+    })
+}
+
+function reg(){
+    window.location = 'register-admin.html'
+}
+
+function getAdminUsers() {
     $.ajax({
         url: '/api/grieve/get-all-grievances',
         type: 'GET',

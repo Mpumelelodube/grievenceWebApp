@@ -6,7 +6,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" href="favicon.ico">
-    <title>Vehicles | Grievance System</title>
+    <title>Grievances | Grievance System</title>
     <!-- Simple bar CSS -->
     <link rel="stylesheet" href="./css/simplebar.css">
     <!-- Fonts CSS -->
@@ -30,7 +30,7 @@
     <link rel="stylesheet" href="./css/custom.css">
 
 </head>
-<body class="vertical  light  " onload="getVehicles(), isAdmin()">
+<body class="vertical  light  " onload="getAdminUsers(), isAdmin()">
 <div class="wrapper">
     <nav class="topnav navbar navbar-light">
         <button type="button" class="navbar-toggler text-muted mt-2 p-0 mr-3 collapseSidebar">
@@ -177,7 +177,7 @@
                         -->
                     </a>
                 </li>
-                <li class="nav-item w-100" id="userManagement">
+                <li class="nav-item w-100 " id="userManagement">
                     <a class="nav-link" href="users.html">
                         <i class="fe fe-layers fe-16"></i>
                         <span class="ml-3 item-text">User Management</span>
@@ -414,9 +414,8 @@
                         <div class="col-md-12 my-4">
                             <div class="card shadow">
                                 <div class="card-body">
-                                    <h5 class="card-title">Vehicle List</h5>
-                                    <p class="card-text">Below is a list of all Vehicle, you can use the available
-                                        filters to view required records</p>
+                                    <h5 class="card-title">Users List</h5>
+                                    <p class="card-text">Below is a list of all administrative users</p>
                                     <div class="row">
                                         <div class="col-md-12">
                                             <div class="form-row">
@@ -425,13 +424,13 @@
                                                     <input type="text" class="form-control" onkeyup="searchFilter()" id="vehiclesSearch" value="" placeholder="Search">
                                                 </div>
                                                 <div class="form-group col-md-3">
-                                                    <label for="create-payment">&nbsp;</label>
-                                                    <!-- Button trigger modal -->
+                                                    <!--<label for="create-payment">&nbsp;</label>
+                                                    &lt;!&ndash; Button trigger modal &ndash;&gt;
                                                     <button id="create-payment" type="button"
                                                             class="btn form-control btn-outline-success"
                                                             data-toggle="modal" data-target="#verticalModal"> Add
                                                         Vehicle
-                                                    </button>
+                                                    </button>-->
                                                 </div>
                                             </div>
                                         </div>
@@ -441,14 +440,13 @@
                                             <table class="table table-hover table-sm">
                                                 <thead>
                                                 <tr>
-                                                    <th>Date added</th>
-                                                    <th>Licence plate</th>
-                                                    <th>Driver</th>
-                                                    <th>Conductor</th>
-                                                    <th>Contact</th>
-                                                    <th>Route</th>
-                                                    <th>Vehicle Type</th>
-                                                    <th>View</th>
+                                                    <th>Name</th>
+                                                    <th>Surname</th>
+                                                    <th>email</th>
+                                                    <th>Role</th>
+                                                    <!--<th>Griever Contact</th>
+                                                    <th>Status</th>
+                                                    <th>View</th>-->
                                                 </tr>
                                                 </thead>
                                                 <tbody id="t_body">
@@ -494,18 +492,18 @@
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="verticalModalTitle">Add Vehicle</h5>
+                        <h5 class="modal-title" id="verticalModalTitle">Create Invoice</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
-                        <p class="card-text">Enter the required details to add a vehicle record</p>
+                        <p class="card-text">Enter the required details to create a payment record</p>
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-row">
                                     <div class="form-group col-md-4">
-                                        <label for="licencePlate">Licence Plate </label>
+                                        <label for="licencePlate">Select Property</label>
                                         <input type="text" class="form-control" id="licencePlate"
                                                placeholder="AAA 000 000">
                                     </div>
@@ -565,46 +563,63 @@
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="verticalModalTitle2">Vehicle Infomation</h5>
+                        <h5 class="modal-title" id="verticalModalTitle2">Grievance status</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
-<!--                        <p class="card-text">Enter the required details to create a payment record</p>-->
+                        <!--                        <p class="card-text">Enter the required details to create a payment record</p>-->
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-row">
                                     <div class="form-group col-md-6">
-                                        <label>Licence Plate: <span id="licencePlate_view"></span></label>
+                                        <label>your email: <strong><span id="email"></span></strong></label>
 
                                     </div>
                                     <div class="form-group col-md-6">
-                                        <label >Driver: <span id="driver_view"></span></label>
+                                        <label >Vehicle: <strong><span id="vehicle"></span></strong></label>
                                     </div>
 
                                 </div>
 
                                 <div class="form-row">
                                     <div class="form-group col-md-6">
-                                        <label >Conductor: <span id="conductor_view"></span></label>
+                                        <label >Date: <strong><span id="f_date"></span></strong></label>
                                     </div>
                                     <div class="form-group col-md-6">
-                                        <label >Route: <span id="route_view"></span></label>
+                                        <label >Status: <strong><span id="status"></span></strong></label>
                                     </div>
                                 </div>
                                 <div class="form-row">
                                     <div class="form-group col-md-6">
-                                        <label >Bus Contact: <span id="contact_view"></span></label>
+                                        <label >Additional info: <strong><span id="additional_info"></span></strong></label>
                                     </div>
                                     <div class="form-group col-md-6">
-                                        <label >Vehicle Type: <span id="vehicle_type_view"></span></label>
+                                        <label >Grievance category: <strong><span id="g_category"></span></strong></label>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-md-12">
+                                        <label for="custom-select">Update grievance status</label>
+                                        <select class="custom-select" oninput="updateGrievanceStatus()" id="custom-select">
+                                            <option selected>Open this select menu</option>
+                                            <option value="2">grievance Viewed</option>
+                                            <option value="3">Investigator assigned</option>
+                                            <option value="4">Issue solved</option>
+                                            <option value="5"><i style="color: red">Disapprove Grievance</i></option>
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="form-row d-flex justify-content-center">
                                     <div class="form-group">
-                                        <div id="qrcode"></div>
-                                        <button id="qrprint">PRINT</button>
+                                        <div class="col-md-12 ">
+                                            <div class="card shadow">
+                                                <div class="card-body text-center" id="graph-div">
+                                                    <div id="radialbar2"></div>
+                                                </div> <!-- / .card-body -->
+                                            </div> <!-- / .card -->
+                                        </div> <!-- /. col -->
                                     </div>
                                 </div>
                                 <hr class="my-4">
@@ -613,9 +628,9 @@
                                         <button type="button" class="btn mb-2 btn-secondary " data-dismiss="modal">
                                             Close
                                         </button>
-<!--                                        <button type="button" class="btn mb-2 btn-primary" onclick="saveBus()">Save-->
-<!--                                            Bus-->
-<!--                                        </button>-->
+                                        <!--                                        <button type="button" class="btn mb-2 btn-primary" onclick="saveBus()">Save-->
+                                        <!--                                            Bus-->
+                                        <!--                                        </button>-->
                                     </div>
                                 </div>
                             </div>
@@ -778,6 +793,7 @@
 <script src='./js/dropzone.min.js'></script>
 <script src='./js/uppy.min.js'></script>
 <script src='./js/quill.min.js'></script>
+<script src="js/apexcharts.min.js"></script>
 <script src='./js/Custom.js'></script>
 
 <script>
@@ -975,11 +991,5 @@
     }
 </script>
 <script src="./js/apps.js"></script>
-<!--Scan QR CDN-->
-<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>-->
-<script src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
-
-<!--Create QR CDN-->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </body>
 </html>
