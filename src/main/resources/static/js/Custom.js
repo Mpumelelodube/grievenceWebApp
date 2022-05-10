@@ -146,7 +146,7 @@ function getGrievencesFront() {
                 if (response[i].status == 1) {
                     statusString = "filed Grievance";
                 } else if (response[i].status == 2) {
-                    statusString = "grievance Viewed" ;
+                    statusString = "grievance Viewed";
                 } else if (response[i].status == 3) {
                     statusString = "Investigator assigned";
                 } else if (response[i].status == 4) {
@@ -182,7 +182,7 @@ function viewGrievance(id) {
             if (grievances[i].status == 1) {
                 statusString = "filed Grievance";
             } else if (grievances[i].status == 2) {
-                statusString = "grievance Viewed" ;
+                statusString = "grievance Viewed";
             } else if (grievances[i].status == 3) {
                 statusString = "Investigator assigned";
             } else if (grievances[i].status == 4) {
@@ -191,12 +191,12 @@ function viewGrievance(id) {
                 statusString = "Issue solved";
             }
 
-            document.getElementById('email').innerText = grievances[i].email ;
-            document.getElementById('vehicle').innerText = grievances[i].licencePlate ;
-            document.getElementById('f_date').innerText = grievances[i].date ;
+            document.getElementById('email').innerText = grievances[i].email;
+            document.getElementById('vehicle').innerText = grievances[i].licencePlate;
+            document.getElementById('f_date').innerText = grievances[i].date;
             document.getElementById('status').innerText = statusString;
-            document.getElementById('additional_info').innerText = grievances[i].additionalInfomation ;
-            document.getElementById('g_category').innerText = grievances[i].cartegories ;
+            document.getElementById('additional_info').innerText = grievances[i].additionalInfomation;
+            document.getElementById('g_category').innerText = grievances[i].cartegories;
 
 
             let status = 10;
@@ -460,7 +460,7 @@ $("#btn1").click(function (e) {
         if (response[i].status == 1) {
             statusString = "filed Grievance";
         } else if (response[i].status == 2) {
-            statusString = "grievance Viewed" ;
+            statusString = "grievance Viewed";
         } else if (response[i].status == 3) {
             statusString = "Investigator assigned";
         } else if (response[i].status == 4) {
@@ -1251,14 +1251,18 @@ function loginAdmin() {
             console.log(response)
             if (response.status === "success") {
 
-                let fullName = response.grievanceUser.firstNane + " " + response.grievanceUser.lastName
-                localStorage.setItem('email', JSON.stringify(response.grievanceUser.email))
+                let fullName = response.userAdmin.firstNane + " " + response.userAdmin.lastName
+                localStorage.setItem('email', JSON.stringify(response.userAdmin.email))
+                localStorage.removeItem('user')
+                localStorage.setItem('user', JSON.stringify(response));
+                localStorage.setItem('name', JSON.stringify(fullName));
 
-                localStorage.setItem('name', JSON.stringify(fullName))
-                if (response.accessLevel == 5){
+                console.log(response.userAdmin.grievanceUser)
+
+                if (response.accessLevel == 5) {
                     alert('this user has not been activated yet')
-                }else {
-                    localStorage.setItem('user', JSON.stringify(response));
+                    return;
+                } else {
                     window.location = "index-admin.html"
                 }
 
@@ -1271,15 +1275,61 @@ function loginAdmin() {
         }
     })
 }
-function isAdmin(){
+
+function isAdmin() {
     let response = JSON.parse(localStorage.getItem('user'));
 
-    console.log(response.accessLevel)
-    if (response.accessLevel != 0){
+    console.log(response.userAdmin.accessLevel)
+    if (response.userAdmin.accessLevel != 0) {
         let element = document.getElementById('userManagement');
 
         element.classList = 'nav-item w-100 disNone'
     }
+}
+
+function getUsers() {
+    $.ajax({
+        url: '/api/user-admin/get-all-users',
+        type: 'GET',
+        success: function (response) {
+            console.log(response)
+
+            localStorage.setItem("users", JSON.stringify(response));
+
+            let t_body = document.getElementById("t_body");
+
+            while (t_body.hasChildNodes()) {
+                t_body.removeChild(t_body.firstChild);
+            }
+            // console.log(response[1].paymentDate)
+
+
+
+            for (let i = response.length - 1; i >= 0; i--) {
+                let level;
+
+                if (response[i].accessLevel == 0){
+                    level = 'Administrator'
+                }else if(response[i].accessLevel == 1){
+                    level = 'Grievance viewer'
+                }else {
+                    level = 'User not activated'
+                }
+                let html = `
+                        <td>${response[i].firstNane}</td>
+                        <td>${response[i].lastName}</td>
+                        <td>${response[i].email}</td>
+                        <td>${level}</td>
+                        <td><button type="button" onclick="admin_view_user('${response[i].id}')" class="btn btn-secondary btn-sm"><i class="bi bi-trash-fill"></i>view </button></td>
+                                                   `
+
+                let tr = document.createElement('tr');
+                tr.innerHTML = html;
+
+                t_body.appendChild(tr);
+            }
+        }
+    })
 }
 
 $('#btn3').click(function (e) {
@@ -1607,7 +1657,7 @@ function getGrievances() {
     })
 }
 
-function reg(){
+function reg() {
     window.location = 'register-admin.html'
 }
 
@@ -1646,7 +1696,7 @@ function getAdminUsers() {
     })
 }
 
-function  admin_view_grievance(id){
+function admin_view_grievance(id) {
     document.getElementById('graph-div').innerHTML = ''
     document.getElementById('graph-div').innerHTML = '<div id="radialbar2"></div>'
 
@@ -1655,14 +1705,14 @@ function  admin_view_grievance(id){
     localStorage.removeItem("view_grivance");
     localStorage.setItem("view_grivance", JSON.stringify(id));
 
-    for (let i = 0; i < grievances.length; i++){
-        if (grievances[i].id == id){
+    for (let i = 0; i < grievances.length; i++) {
+        if (grievances[i].id == id) {
             let statusString = "";
 
             if (grievances[i].status == 1) {
                 statusString = "filed Grievance";
             } else if (grievances[i].status == 2) {
-                statusString = "grievance Viewed" ;
+                statusString = "grievance Viewed";
             } else if (grievances[i].status == 3) {
                 statusString = "Investigator assigned";
             } else if (grievances[i].status == 4) {
@@ -1671,12 +1721,12 @@ function  admin_view_grievance(id){
                 statusString = "Issue solved";
             }
 
-            document.getElementById('email').innerText = grievances[i].email ;
-            document.getElementById('vehicle').innerText = grievances[i].licencePlate ;
-            document.getElementById('f_date').innerText = grievances[i].date ;
+            document.getElementById('email').innerText = grievances[i].email;
+            document.getElementById('vehicle').innerText = grievances[i].licencePlate;
+            document.getElementById('f_date').innerText = grievances[i].date;
             document.getElementById('status').innerText = statusString;
-            document.getElementById('additional_info').innerText = grievances[i].additionalInfomation ;
-            document.getElementById('g_category').innerText = grievances[i].cartegories ;
+            document.getElementById('additional_info').innerText = grievances[i].additionalInfomation;
+            document.getElementById('g_category').innerText = grievances[i].cartegories;
 
             let status = 10;
             if (grievances[i].status == 1) {
@@ -1754,7 +1804,72 @@ function  admin_view_grievance(id){
     }
 }
 
-function  updateGrievanceStatus(){
+function admin_view_user(id){
+    let grievances = JSON.parse(localStorage.getItem('users'));
+
+    localStorage.removeItem("view_user");
+    localStorage.setItem("view_user", JSON.stringify(id));
+
+    for (let i = 0; i < grievances.length; i++) {
+        if (grievances[i].id == id) {
+            let level = "";
+
+            if (grievances[i].accessLevel == 0){
+                level = 'Administrator'
+            }else if(grievances[i].accessLevel == 1){
+                level = 'Grievance viewer'
+            }else {
+                level = 'User not activated'
+            }
+
+            document.getElementById('email').innerText = grievances[i].email;
+            document.getElementById('vehicle').innerText = grievances[i].firstNane;
+            document.getElementById('f_date').innerText = grievances[i].lastName;
+            document.getElementById('status').innerText = level;
+            /*document.getElementById('additional_info').innerText = grievances[i].additionalInfomation;
+            document.getElementById('g_category').innerText = grievances[i].cartegories;*/
+
+
+
+            $('#verticalModal2').modal('show')
+        }
+    }
+}
+
+function updateUserRole(){
+    let id = JSON.parse(localStorage.getItem('view_user'));
+
+    let accessLevel = document.getElementById('custom-select').value;
+
+    let data = {
+        accessLevel: accessLevel
+    }
+    $.ajax({
+        url: '/api/user-admin/update/' + id,
+        type: 'PUT',
+        dataType: "json",
+        crossDomain: "true",
+        contentType: "application/json; charset=utf-8",
+        data: JSON.stringify(data),
+        success: function (response) {
+            let level = "";
+
+            if (response.accessLevel == 0){
+                level = 'Administrator'
+            }else if(response.accessLevel == 1){
+                level = 'Grievance viewer'
+            }else {
+                level = 'User not activated'
+            }
+
+            document.getElementById('status').innerText = level;
+
+            getUsers()
+        }
+    })
+}
+
+function updateGrievanceStatus() {
     let id = JSON.parse(localStorage.getItem('view_grivance'));
 
     let g_status = document.getElementById('custom-select').value;
@@ -1763,7 +1878,7 @@ function  updateGrievanceStatus(){
         status: g_status
     }
     $.ajax({
-        url: '/api/grieve/update-grievance/'+id,
+        url: '/api/grieve/update-grievance/' + id,
         type: 'PUT',
         dataType: "json",
         crossDomain: "true",
@@ -1777,7 +1892,7 @@ function  updateGrievanceStatus(){
             if (grievances.status == 1) {
                 statusString = "filed Grievance";
             } else if (grievances.status == 2) {
-                statusString = "grievance Viewed" ;
+                statusString = "grievance Viewed";
             } else if (grievances.status == 3) {
                 statusString = "Investigator assigned";
             } else if (grievances.status == 4) {
@@ -1864,7 +1979,7 @@ function  updateGrievanceStatus(){
 
 /*chat*/
 
-function insertMessage(){
+function insertMessage() {
     let msg = $('.message-input').val();
     if ($.trim(msg) == '') {
         return false;
@@ -1878,14 +1993,14 @@ function insertMessage(){
     }, 1000 + (Math.random() * 20) * 100);*/
 }
 
-function fakeMessage(message){
+function fakeMessage(message) {
     if ($('.message-input').val() != '') {
         return false;
     }
     $('<div class="message loading new"><figure class="avatar"><img src="./assets/images/office_worker_at_work_4721901.png" /></figure><span></span></div>').appendTo($('.mCSB_container'));
     updateScrollbar();
 
-    setTimeout(function() {
+    setTimeout(function () {
         $('.message.loading').remove();
         $('<div class="message new"><figure class="avatar"><img src="./assets/images/office_worker_at_work_4721901.png" /></figure>' + message + '</div>').appendTo($('.mCSB_container')).addClass('new');
         setDate();
@@ -1894,21 +2009,21 @@ function fakeMessage(message){
     }, 2000 + (Math.random() * 20) * 100);
 }
 
-function firstOption () {
+function firstOption() {
     let msg = $('.message-input').val();
     console.log(msg)
     insertMessage()
-    if (msg == 1){
+    if (msg == 1) {
         fakeMessage('There are Two ways to file a grievance, Please select one');
-        setTimeout(function() {
+        setTimeout(function () {
             fakeMessage(` 1. Scan QR code <br> 2. Fill in a grievance form`);
         }, 500);
 
         document.getElementById('btn_send').removeAttribute('onclick');
         document.getElementById('btn_send').setAttribute('onclick', 'secondOption()');
-    }else if (msg == 2){
+    } else if (msg == 2) {
         fakeMessage('I have displayed all grievances you have filed before to the lest of the screen');
-        setTimeout(function() {
+        setTimeout(function () {
             fakeMessage(`Please enter grievance id to view progress on timeline, alternatively you can click <b>view on timeline</b>`);
         }, 1000);
         getGrievencesFront()
@@ -1920,7 +2035,7 @@ function firstOption () {
 
         document.getElementById('btn_send').removeAttribute('onclick');
         document.getElementById('btn_send').setAttribute('onclick', 'viewGrievanceNew()');
-    }else {
+    } else {
         fakeMessage(`Invalid response please re-enter your response`);
         return;
     }
@@ -1940,14 +2055,14 @@ function getScannedVehicle(vehicle) {
                     localStorage.setItem('lPlateNumer', JSON.stringify(response[i].licencePlate))
 
                     fakeMessage('below is the information for the bus you selected');
-                    setTimeout(function() {
+                    setTimeout(function () {
                         fakeMessage(`Licence plate : ${response[i].licencePlate}, <br> Driver : ${response[i].driver},  <br> Conductor : ${response[i].conductor},  <br> Route : ${response[i].route}`);
                     }, 2000);
 
 
-                    setTimeout(function() {
+                    setTimeout(function () {
                         fakeMessage(`Please describe the nature of  <br> your grievance and site all challenges <br> faced with the vehicle above`);
-                    },3000);
+                    }, 3000);
 
                     document.getElementById('btn_send').removeAttribute('onclick');
                     document.getElementById('btn_send').setAttribute('onclick', 'getDescription()');
@@ -1957,11 +2072,11 @@ function getScannedVehicle(vehicle) {
     })
 }
 
-function secondOption(){
+function secondOption() {
     let msg = $('.message-input').val();
     console.log(msg)
     insertMessage()
-    if (msg == 1){
+    if (msg == 1) {
         fakeMessage('I am going to open your camera so you scan the QR code');
 
         document.getElementById('row-1').classList = 'row disNone'
@@ -1969,7 +2084,7 @@ function secondOption(){
         document.getElementById('row-3').classList = 'row disNone'
         document.getElementById('row-4').classList = 'row'
 
-        setTimeout(function() {
+        setTimeout(function () {
             let scanner = new Instascan.Scanner({video: document.getElementById('preview2')});
             scanner.addListener('scan', function (content) {
                 alert(content);
@@ -1995,7 +2110,7 @@ function secondOption(){
                 console.error(e);
             });
         }, 2000);
-    }else if (msg == 2){
+    } else if (msg == 2) {
         fakeMessage('I have activated the form to the <br> left of the screen, please fill the form and submit')
 
         document.getElementById('btn_send').removeAttribute('onclick');
@@ -2010,7 +2125,7 @@ function secondOption(){
     }
 }
 
-function getDescription(){
+function getDescription() {
     let msg = $('.message-input').val();
     console.log(msg)
     insertMessage()
@@ -2028,7 +2143,7 @@ function getDescription(){
 
 }
 
-function activateradialBar(){
+function activateradialBar() {
     var radialbarChart, radialbarOptions = {
         series: [10],
         chart: {height: 200, type: "radialBar"},
@@ -2089,7 +2204,7 @@ function activateradialBar(){
     radialbar && (radialbarChart = new ApexCharts(radialbar, radialbarOptions)).render();
 }
 
-function getLicencePlateChat(){
+function getLicencePlateChat() {
     let msg = $('.message-input').val();
     console.log(msg)
     insertMessage()
@@ -2104,16 +2219,16 @@ function getLicencePlateChat(){
 function firstMsg() {
     $messages.mCustomScrollbar();
     fakeMessage(`Hie ${localStorage.getItem('name')} I am sophia, a virtual assistant designed to help you file your grievance`);
-    setTimeout(function() {
+    setTimeout(function () {
         fakeMessage(`Please select an option  <br> 1. File grievance  <br> 2. Track Grievance`);
     }, 100);
 
 }
 
 function formSubmit() {
-    let licencePlate = document.getElementById('inputLicencePlate'). value;
-    let additionalInfomation = document.getElementById('additionalInfomation'). value;
-    let cartegories = document.getElementById('category2'). value;
+    let licencePlate = document.getElementById('inputLicencePlate').value;
+    let additionalInfomation = document.getElementById('additionalInfomation').value;
+    let cartegories = document.getElementById('category2').value;
     let email = JSON.parse(localStorage.getItem('email'))
 
     let data = {
@@ -2139,7 +2254,7 @@ function formSubmit() {
 
 }
 
-function saveGrievance(data){
+function saveGrievance(data) {
     $.ajax({
         url: 'http://localhost:8090/api/grieve/save-grievance',
         type: 'POST',
@@ -2157,7 +2272,7 @@ function saveGrievance(data){
             document.getElementById('row-3').classList = 'row disNone'
             document.getElementById('row-4').classList = 'row disNone'
 
-            setTimeout(function() {
+            setTimeout(function () {
                 firstMsg()
             }, 500);
 
@@ -2167,10 +2282,10 @@ function saveGrievance(data){
     })
 }
 
-function viewGrievanceNew(iD){
+function viewGrievanceNew(iD) {
     console.log(iD)
     let id = iD || $('.message-input').val()
-    if (isNaN(parseInt(id))){
+    if (isNaN(parseInt(id))) {
         fakeMessage(`Invalid response please re-enter your response`);
         return;
     }
@@ -2200,9 +2315,9 @@ function viewGrievanceNew(iD){
                                             <h5 class="text-center">Please select a grievace to display its timeline</h5>
                                         </div>`
 
-    setTimeout(function() {
-        for(let i = 0; i < response.length; i ++){
-            if (id == response[i].id){
+    setTimeout(function () {
+        for (let i = 0; i < response.length; i++) {
+            if (id == response[i].id) {
                 if (response[i].status == 1) {
                     statusString = "filed Grievance";
                     alert(response.status)
@@ -2231,7 +2346,7 @@ function viewGrievanceNew(iD){
 
                     container.innerHTML = html
                 } else if (response[i].status == 2) {
-                    statusString = "grievance Viewed" ;
+                    statusString = "grievance Viewed";
 
                     alert(response.status)
 

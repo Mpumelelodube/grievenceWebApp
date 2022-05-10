@@ -7,7 +7,9 @@ import com.grievency.grievencewebapp.repository.UserAdminRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class UserAdminService {
@@ -39,5 +41,16 @@ public class UserAdminService {
 
     public UserAdmin findByEmail(String email){
         return userAdminRepository.findByEmail(email);
+    }
+
+    @Transactional
+    public UserAdmin updateUser(UserAdmin update, Long id) {
+        UserAdmin userAdmin = userAdminRepository.findById(id).orElseThrow(() -> new  IllegalStateException ("user does not exist"));
+
+        if (!Objects.equals(userAdmin.getAccessLevel(), update.getAccessLevel())){
+            userAdmin.setAccessLevel(update.getAccessLevel());
+        }
+
+        return userAdmin;
     }
 }

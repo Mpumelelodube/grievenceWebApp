@@ -30,7 +30,7 @@
     <link rel="stylesheet" href="./css/custom.css">
 
 </head>
-<body class="vertical  light  " onload="getAdminUsers(), isAdmin()">
+<body class="vertical  light  " onload="/*getAdminUsers(),*/getUsers(), isAdmin()">
 <div class="wrapper">
     <nav class="topnav navbar navbar-light">
         <button type="button" class="navbar-toggler text-muted mt-2 p-0 mr-3 collapseSidebar">
@@ -563,7 +563,7 @@
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="verticalModalTitle2">Grievance status</h5>
+                        <h5 class="modal-title" id="verticalModalTitle2">User Details</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -574,52 +574,33 @@
                             <div class="col-md-12">
                                 <div class="form-row">
                                     <div class="form-group col-md-6">
-                                        <label>your email: <strong><span id="email"></span></strong></label>
+                                        <label>Email: <strong><span id="email"></span></strong></label>
 
                                     </div>
                                     <div class="form-group col-md-6">
-                                        <label >Vehicle: <strong><span id="vehicle"></span></strong></label>
+                                        <label >First Name: <strong><span id="vehicle"></span></strong></label>
                                     </div>
 
                                 </div>
 
                                 <div class="form-row">
                                     <div class="form-group col-md-6">
-                                        <label >Date: <strong><span id="f_date"></span></strong></label>
+                                        <label >Last Name: <strong><span id="f_date"></span></strong></label>
                                     </div>
                                     <div class="form-group col-md-6">
-                                        <label >Status: <strong><span id="status"></span></strong></label>
-                                    </div>
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-group col-md-6">
-                                        <label >Additional info: <strong><span id="additional_info"></span></strong></label>
-                                    </div>
-                                    <div class="form-group col-md-6">
-                                        <label >Grievance category: <strong><span id="g_category"></span></strong></label>
+                                        <label >Role: <strong><span id="status"></span></strong></label>
                                     </div>
                                 </div>
                                 <div class="form-row">
                                     <div class="form-group col-md-12">
-                                        <label for="custom-select">Update grievance status</label>
-                                        <select class="custom-select" oninput="updateGrievanceStatus()" id="custom-select">
+                                        <label for="custom-select">Change User Role</label>
+                                        <select class="custom-select" oninput="updateUserRole()" id="custom-select">
                                             <option selected>Open this select menu</option>
-                                            <option value="2">grievance Viewed</option>
-                                            <option value="3">Investigator assigned</option>
-                                            <option value="4">Issue solved</option>
-                                            <option value="5"><i style="color: red">Disapprove Grievance</i></option>
+                                            <option value="0">Administrator</option>
+                                            <option value="1">Grievance Viewer</option>
+                                            <!--<option value="4">Issue solved</option>
+                                            <option value="5"><i style="color: red">Disapprove Grievance</i></option>-->
                                         </select>
-                                    </div>
-                                </div>
-                                <div class="form-row d-flex justify-content-center">
-                                    <div class="form-group">
-                                        <div class="col-md-12 ">
-                                            <div class="card shadow">
-                                                <div class="card-body text-center" id="graph-div">
-                                                    <div id="radialbar2"></div>
-                                                </div> <!-- / .card-body -->
-                                            </div> <!-- / .card -->
-                                        </div> <!-- /. col -->
                                     </div>
                                 </div>
                                 <hr class="my-4">

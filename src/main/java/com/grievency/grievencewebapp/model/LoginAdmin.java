@@ -10,7 +10,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 public class LoginAdmin {
-    private UserAdmin grievanceUser;
+    private UserAdmin userAdmin;
     private String status;
 
 }

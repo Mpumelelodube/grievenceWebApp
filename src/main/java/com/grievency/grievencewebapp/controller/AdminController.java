@@ -49,6 +49,11 @@ public class AdminController {
         }
     }
 
+    @PutMapping("/update/{id}")
+    public UserAdmin update(@RequestBody UserAdmin userAdmin, @PathVariable Long id){
+        return userAdminService.updateUser(userAdmin, id);
+    }
+
     public UserAdmin getUser(String email){
         return userAdminService.findByEmail(email);
     }
